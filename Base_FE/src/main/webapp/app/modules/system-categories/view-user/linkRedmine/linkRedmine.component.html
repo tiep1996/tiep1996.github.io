@@ -1,0 +1,144 @@
+<div class="custom-modal-large" jhiModalDrag [handle]="handle">
+  <div class="modal-header" #handle>
+    <h5  class="modal-title mt-0">Liên kết với Redmine</h5>
+    <button type="button" class="close" aria-label="Close" (click)="onCloseAddModal()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <perfect-scrollbar class="ps" [style.max-height.px]="height" (window:resize)="onResize()">
+    <div class="modal-body">
+      <form [formGroup]="form" >
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group" >
+              <label class="form-control-label"
+              >Mã dự án</label>
+              <input  disabled type="text" value="{{code}}" class="form-control"/>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group"[ngClass]="{'has-error': errorLinkList.includes('pro')}" >
+              <label class="form-control-label"[ngClass]="action=='edit'?'required':''"
+                      >Link dự án</label>
+              <input type="text" formControlName="linkProject" class="form-control" [readonly]="action == 'view'"
+                     (blur)="trimSpace('linkProject')"/>
+              <jhi-error-messages *ngIf="formControl['linkProject'].hasError('required')" [displayError]="isFieldValid('linkProject')"
+                                  errorMsg="Link dự án bắt buộc nhập">
+              </jhi-error-messages>
+              <jhi-error-messages *ngIf="formControl['linkProject'].hasError('maxlength')" [displayError]="isFieldValid('linkProject')"
+                                  errorMsg="Link dự án không được vượt quá 500 ký tự">
+              </jhi-error-messages>
+              <jhi-error-messages *ngIf="errorLinkList.includes('pro')" [displayError]="errorLinkList.includes('pro')"
+                                  errorMsg="Link dự án không đúng">
+              </jhi-error-messages>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group" [ngClass]="{'has-error': errorLinkList.includes('ba')}">
+              <label class="form-control-label"
+                   >Link Future tiến độ BA</label>
+              <input type="text" formControlName="linkBA" class="form-control" [readonly]="action == 'view'"
+                     (blur)="trimSpace('linkBA')"/>
+              <jhi-error-messages *ngIf="formControl['linkBA'].hasError('maxlength')" [displayError]="isFieldValid('linkBA')"
+                                  errorMsg="Link BA không được vượt quá 500 ký tự">
+              </jhi-error-messages>
+              <jhi-error-messages *ngIf="errorLinkList.includes('ba')" [displayError]="errorLinkList.includes('ba')"
+                                  errorMsg="Link BA không đúng">
+              </jhi-error-messages>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group"
+                 [ngClass]="{'has-error': errorLinkList.includes('dev')}">
+              <label class="form-control-label">Link Future tiến độ Dev</label>
+              <input type="text" formControlName="linkDev" class="form-control" [readonly]="action == 'view'"
+                     (blur)="trimSpace('linkDev')"/>
+              <jhi-error-messages *ngIf="formControl['linkDev'].hasError('maxlength')" [displayError]="isFieldValid('linkDev')"
+                                  errorMsg="Link DEV không được vượt quá 500 ký tự">
+              </jhi-error-messages>
+              <jhi-error-messages *ngIf="errorLinkList.includes('dev')" [displayError]="errorLinkList.includes('dev')"
+                                  errorMsg="Link DEV không đúng">
+              </jhi-error-messages>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group" [ngClass]="{'has-error': errorLinkList.includes('test')}">
+              <label class="form-control-label">Link Future tiến độ Test</label>
+              <input type="text" formControlName="linkTest" class="form-control" [readonly]="action == 'view'"
+                     (blur)="trimSpace('linkTest')"
+                     />
+              <jhi-error-messages *ngIf="formControl['linkTest'].hasError('maxlength')" [displayError]="isFieldValid('linkTest')"
+                                  errorMsg="Link Test không được vượt quá 500 ký tự">
+              </jhi-error-messages>
+              <jhi-error-messages *ngIf="errorLinkList.includes('test')" [displayError]="errorLinkList.includes('test')"
+                                  errorMsg="Link Test không đúng">
+              </jhi-error-messages>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group" [ngClass]="{'has-error': errorLinkList.includes('tkct')}">
+              <label class="form-control-label">Link Future tiến độ tài liệu TKCT</label>
+              <input type="text" formControlName="linkTKCT" class="form-control" [readonly]="action == 'view'"
+                     (blur)="trimSpace('linkTKCT')"/>
+              <jhi-error-messages *ngIf="formControl['linkTKCT'].hasError('maxlength')" [displayError]="isFieldValid('linkTKCT')"
+                                  errorMsg="Link TKCT không được vượt quá 500 ký tự">
+              </jhi-error-messages>
+              <jhi-error-messages *ngIf="errorLinkList.includes('tkct')" [displayError]="errorLinkList.includes('tkct')"
+                                  errorMsg="Link TKCT không đúng">
+              </jhi-error-messages>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group" [ngClass]="{'has-error': errorLinkList.includes('kbkt')}">
+              <label class="form-control-label">Link Future tiến độ KBKT</label>
+              <input type="text" formControlName="linkKBKT" class="form-control" [readonly]="action == 'view'"
+                     (blur)="trimSpace('linkKBKT')"/>
+              <jhi-error-messages *ngIf="formControl['linkKBKT'].hasError('maxlength')" [displayError]="isFieldValid('linkKBKT')"
+                                  errorMsg="Link KBKT không được vượt quá 500 ký tự">
+              </jhi-error-messages>
+              <jhi-error-messages *ngIf="errorLinkList.includes('kbkt')" [displayError]="errorLinkList.includes('kbkt')"
+                                  errorMsg="Link KBKT không đúng">
+              </jhi-error-messages>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group" [ngClass]="{'has-error': errorLinkList.includes('fixbug')}">
+              <label class="form-control-label">Link Future tiến độ Retest/Fixbug</label>
+              <input type="text" formControlName="linkFixBug" class="form-control" [readonly]="action == 'view'"
+                     (blur)="trimSpace('linkFixBug')"/>
+              <jhi-error-messages *ngIf="formControl['linkFixBug'].hasError('maxlength')" [displayError]="isFieldValid('linkFixBug')"
+                                  errorMsg="Link Retest/Fixbug không được vượt quá 500 ký tự">
+              </jhi-error-messages>
+              <jhi-error-messages *ngIf="errorLinkList.includes('fixbug')" [displayError]="errorLinkList.includes('fixbug')"
+                                  errorMsg="Link Retest/Fixbug không đúng">
+              </jhi-error-messages>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </perfect-scrollbar>
+  <div class="modal-footer">
+
+      <button #cancelBtn type="button" class="btn btn-light alight" (click)="onCloseAddModal()" *ngIf="action == 'view'">
+          <i class="fa fa-times mr-2" aria-hidden="true"></i><span>Đóng</span>
+        </button>
+    <button #cancelBtn type="button" class="btn btn-light alight" (click)="onCloseAddModal()" *ngIf="action != 'view'">
+      <i class="fa fa-times mr-2" aria-hidden="true"></i><span>Hủy bỏ</span>
+    </button>
+    <button  (click)="onSubmitData()" class="btn btn-primary" *ngIf="action != 'view'">
+      <i class="fa fa-floppy-o mr-2" aria-hidden="true" ></i><span jhiTranslate="common.button.confirm.save" >Ghi
+        lại</span>
+    </button>
+  </div>
+</div>
+
+

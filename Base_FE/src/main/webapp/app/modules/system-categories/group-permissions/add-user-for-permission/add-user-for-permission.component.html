@@ -1,0 +1,103 @@
+<div class="custom-modal-large" jhiModalDrag [handle]="handle">
+  <div class="modal-header" #handle>
+    <h5 class="modal-title mt-0">Thêm nhân sự vào nhóm quyền</h5>
+    <button type="button" class="close" aria-label="Close" (click)="onCloseAddModal()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+</div>
+<perfect-scrollbar class="ps" [style.max-height.px]="height" (window:resize)="onResize()">
+  <div class="modal-body">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="form-control-label col-md-2">Bộ phận/Vai trò</label>
+            <input type="text" class="form-control-label col-md-6" disabled value="Bộ phận / Vai trò"
+                   name="department" [ngModel]="data.code">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="form-control-label col-md-6">Danh sách nhân sự <span style="color: red">*</span></label>
+          </div>
+        </div>
+      </div>
+      <br>
+      <table class="table table-bordered table-hover table-striped">
+        <thead>
+        <tr class="text-center" jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
+          <th scope="col" class="small-width-table">STT</th>
+          <th scope="col" class="medium-width-table action-width-four-icon custom-width">Hành động</th>
+          <th scope="col">Mã nhân sự <span style="color: red">(*)</span></th>
+          <th scope="col">Phòng ban / Tổ chức</th>
+        </tr>
+        </thead>
+
+        <tr *ngFor="let item of listUserPermitted; let i = index">
+          <td class="text-center">{{i + 1}}</td>
+          <td class="text-center four-icon medium-width-table">
+            <div class="group-action">
+              <button class="btn btn-light" placement="top"
+                      ngbTooltip="{{'common.tooltip.action.delete' | translate}}"
+                      (click)="deleteFieldValue(i)">
+                <i class="fa fa-trash-o icon-delete" aria-hidden="true"></i>
+              </button>
+            </div>
+          </td>
+          <td>
+            <input type="text" *ngIf="listUserPermitted[i].username != ''"
+                   class="form-control-label form-group col-md-12" disabled
+                   [(ngModel)]="listUserPermitted[i].username">
+            <ng-select [items]="listUnit$ | async" autofocus
+                       *ngIf="listUserPermitted[i].username == ''"
+                       clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                       notFoundText="{{( unitSearch ?   'common.select.notFoundText' :  'common.select.required') | translate }}"
+                       bindLabel="username" bindValue="humanResourceId"
+                       (search)="onSearchUnit($event)"
+                       (clear)="onClearUnit()"
+                       (close)="onSearchUnitClose()"
+                       name="permittedUser"
+                       [(ngModel)]="listUserPermitted[i].humanResourceId"
+                       (change)="changeData($event)">
+              <ng-template ng-option-tmp let-item="item">
+                {{item.username}} <br/>
+              </ng-template>
+            </ng-select>
+          </td>
+          <td>
+            <input type="text" *ngIf="listUserPermitted[i].parcode !== ''"
+                   class="form-control-label form-group col-md-12" disabled value="Bộ phận / Vai trò"
+                   [(ngModel)]="listUserPermitted[i].parcode">
+            <input type="text" *ngIf="listUserPermitted[i].parcode === ''"
+                   class="form-control-label form-group col-md-12" disabled value="Bộ phận / Vai trò"
+                   [ngModel]="tempParcode">
+          </td>
+        </tr>
+      </table>
+      <button type="button" class="btn btn-primary btn-view-column ml-2" (click)="onClickAddEffort()"
+              [disabled]="disableAddNew"
+              style="width: 60px; margin-top: 15px;">
+        <i class="fa fa-plus mr-2" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="row pr-1" style="width: 50%; margin: 0px auto; padding-left: 10%;">
+      <button #cancelBtn type="button" class="btn btn-light" (click)="onCloseAddModal()"
+              style="margin: 5px">
+        <i class="fa fa-times mr-2" aria-hidden="true"></i><span
+        jhiTranslate="{{(type !== 'detail'? 'common.button.confirm.cancel' :  'common.button.close') }}"> Hủy
+        bỏ</span>
+      </button>
+      <button *ngIf="type !== 'detail'" type="submit" class="btn btn-primary" (click)="onSubmitData()"
+              style="margin: 5px">
+        <i class="fa fa-floppy-o mr-2" aria-hidden="true"></i><span
+        jhiTranslate="common.button.confirm.save">Ghi lại</span>
+      </button>
+    </div>
+  </div>
+</perfect-scrollbar>
+

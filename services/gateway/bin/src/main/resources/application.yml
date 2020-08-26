@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: Gateway
+  cloud:
+    gateway:
+      routes:
+        - id: project-service
+          uri: http://iist.com.vn
+          predicates:
+            - Path=/project/**
+server:
+  port: 8062
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8061/eureka/

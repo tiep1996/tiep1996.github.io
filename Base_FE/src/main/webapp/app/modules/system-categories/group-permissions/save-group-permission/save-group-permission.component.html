@@ -1,0 +1,139 @@
+<div class="custom-modal-large" jhiModalDrag [handle]="handle">
+  <div class="modal-header" #handle>
+    <h5 *ngIf="type === 'add'" class="modal-title mt-0">Thêm mới nhóm quyền</h5>
+    <h5 *ngIf="type === 'update'" class="modal-title mt-0">Cập nhật nhóm quyền
+    </h5>
+    <button type="button" class="close" aria-label="Close" (click)="onCancel()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <perfect-scrollbar class="ps" [style.max-height.px]="height" (window:resize)="onResize()">
+    <div class="modal-body">
+      <form [formGroup]="form" *ngIf="form" novalidate autocomplete="off">
+        <div class="card mb-1">
+          <div class="card-header">
+            <a data-toggle="collapse" href="#info" aria-expanded="true">Thông tin chung</a>
+          </div>
+          <div id="info" class="collapse show">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group" [ngClass]="displayFieldHasError('code')">
+                    <label class="form-control-label required">Bộ phận/Vai trò</label>
+                    <ng-select class="cursor-text scroll-ng-select" [readonly]="type==='update'"
+                               bindLabel="name" bindValue="name" formControlName="code"
+                               notFoundText="{{ 'common.select.notFoundText' | translate }}"
+                               placeholder="{{ 'common.select.option.default' | translate }}"
+                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                               [items]="listRole"
+                               [multiple]="false"
+                               [clearable]="false"
+                               [searchable]="false"
+                               [searchFn]="customSearchFn"
+                               (clear)="onClearPosition()"
+                               autofocus>
+                    </ng-select>
+                    <jhi-error-messages *ngIf="formControl['code'].hasError('required')"
+                                        [displayError]="isFieldValid('code')"
+                                        errorMsg="Trường này không được để trống">
+                    </jhi-error-messages>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group" [ngClass]="displayFieldHasError('name')">
+                    <label class="form-control-label required">Tên nhóm quyền</label>
+                    <input type="text" formControlName="name" class="form-control"
+                           [ngClass]="type === 'add' || type === 'update' ? 'form-control' : 'input-border-bottom'"
+                           [readOnly]="type === 'detail'" maxlength="255" (blur)="trimSpace('name')"/>
+                    <jhi-error-messages *ngIf="formControl['name'].hasError('required')"
+                                        [displayError]="isFieldValid('name')"
+                                        errorMsg="Trường này không được để trống">
+                    </jhi-error-messages>
+                    <jhi-error-messages *ngIf="formControl['name'].hasError('maxlength')"
+                                        [displayError]="isFieldValid('name')"
+                                        errorMsg="Trường này không được để trống">
+                    </jhi-error-messages>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group" [ngClass]="displayFieldHasError('status')">
+                    <label class="form-control-label">Trạng thái</label>
+                    <ng-select class="cursor-text scroll-ng-select"
+                               formControlName="status"
+                               bindValue="value" bindLabel="name"
+                               [clearable]="false"
+                               [searchable]="false"
+                               [items]="statusList"
+                               [multiple]="false"
+                               (clear)="onClearPosition()">
+                    </ng-select>
+                    <jhi-error-messages *ngIf="formControl['status'].hasError('required')"
+                                        [displayError]="isFieldValid('status')"
+                                        errorMsg="Trường này không được để trống">
+                    </jhi-error-messages>
+                  </div>
+                </div>
+                <div class="col-md-6">
+
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group" [ngClass]="displayFieldHasError('note')">
+                    <label class="form-control-label"
+                           jhiTranslate="user.note">Ghi chú</label>
+                    <textarea rows="4" cols="400" formControlName="note" class="form-control"
+                              type="text" maxlength="500" (blur)="trimSpace('note')"></textarea>
+                    <jhi-error-messages *ngIf="formControl['note'].hasError('maxlength')"
+                                        [displayError]="isFieldValid('note')"
+                                        errorMsg="{{ 'user.validate.note.maxlength' | translate }}">
+                    </jhi-error-messages>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header required">
+            <a data-toggle="collapse" href="#permission" aria-expanded="true">Nhóm quyền</a>
+          </div>
+          <div id="permission" class="collapse show">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label class="form-control-label">
+                      Chọn tất cả
+                    </label>
+                    <ngx-treeview [config]="config" [items]="items" (selectedChange)="onSelectedChange($event)">
+                    </ngx-treeview>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </perfect-scrollbar>
+  <div class="modal-footer">
+    <button #cancelBtn type="button" class="btn btn-light alight" (click)="onCancel()">
+      <i class="fa fa-times mr-2" aria-hidden="true"></i><span
+      jhiTranslate="{{(type !== 'detail'? 'common.button.confirm.cancel' : 'common.button.close')}}">Hủy bỏ</span>
+    </button>
+    <button *ngIf="type !== 'detail'" type="submit" class="btn btn-primary" (click)="onSubmitData()">
+      <i class="fa fa-floppy-o mr-2" aria-hidden="true"></i><span jhiTranslate="common.button.confirm.save">Ghi
+        lại</span>
+    </button>
+  </div>
+</div>
+
+

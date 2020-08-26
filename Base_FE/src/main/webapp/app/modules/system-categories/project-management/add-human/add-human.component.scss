@@ -1,0 +1,80 @@
+.tcell{
+  margin-left: 5%;
+  font-weight: bold
+}
+.tcell2{
+  margin-left: 3%;
+  float: left;
+}
+.tcell1{
+  font-weight: bold;
+  float: right;
+}
+[contenteditable="true"].single-line {
+  display: block;
+  height: auto;
+  overflow: hidden;
+}
+[contenteditable="true"].single-line br {
+  display:none;
+}
+
+[contenteditable="true"].single-line * {
+  display:inline;
+  white-space:nowrap;
+}
+
+.table .small-width-table{
+  width: 40px!important;
+  padding: 0 !important;
+}
+
+.table .medium-width-table {
+  width: 100px;
+}
+
+.table .large-width-table {
+  width: 150px;
+}
+
+
+
+/* duongdp add */
+
+.fixed {
+  width: 100%;
+  min-width: 968px;
+  table-layout: fixed;
+}
+
+.stt {
+  width: 40px;
+  min-width: 40px;
+}
+
+.w5per {
+  width: 5%;
+  min-width: 75px;
+}
+
+.w10per {
+  width: 10%;
+  min-width: 75px;
+}
+
+.w15per {
+  width: 15%;
+  min-width: 75px;
+}
+
+.w20per {
+  width: 20%;
+  min-width: 75px;
+}
+
+.w25per {
+  width: 25%;
+  min-width: 75px;
+}
+
+/* duongdp add end */

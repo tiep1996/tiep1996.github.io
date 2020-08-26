@@ -1,0 +1,45 @@
+::ng-deep .modal-lg{
+  max-width: 100%;
+  width: 60% !important;
+}
+
+@media only screen and (max-width:1025px) {
+  #LabelText{
+    font-size: 14px;
+  }
+  #formFrom{
+    width: 104px;
+    margin-left: 50px;
+    margin-top: -46px;
+  }
+  #labeTo{
+    margin-left: 7px;
+    margin-top: -44px;
+
+  }
+  #formTo{
+    width: 131px;
+    margin-top: -46px;
+    margin-left: 38px;
+  }
+
+}
+
+
+@media only screen and (min-width:1200px) {
+
+  #formFrom{
+    width: 233px; 
+    margin-left: -52px;
+  }
+  #labeTo{
+    margin-left: -15px;
+
+  }
+  #formTo{
+    width: 291px;
+  }
+
+}
+
+

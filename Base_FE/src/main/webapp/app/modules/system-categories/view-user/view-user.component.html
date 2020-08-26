@@ -1,0 +1,640 @@
+<jhi-spinner></jhi-spinner>
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <button routerLink="" class="btn btn-link btn-custom-bg" ngbTooltip="{{'common.tooltip.home' | translate}}">
+      <i class="fa fa-home icon-breadcrumb" aria-hidden="true"></i>
+    </button>
+  </li>
+  <li class="breadcrumb-item"><a jhiTranslate="">Quản lý dự án</a></li>
+  <li class="breadcrumb-item active" jhiTranslate="">Xem thông tin dự án</li>
+</ol>
+<perfect-scrollbar class="ps" [style.max-height.px]="height" (window:resize)="onResize()">
+  <div class="col-md-3" style=" margin: 0 auto; font-size: 20px; font-weight: bold;">KPI nguồn lực dự án: {{nameProject}}</div>
+
+  <div class="col-md-9" style=" margin: 0 auto;">
+    <jhi-bar-chart></jhi-bar-chart>
+  </div>
+
+  <div id="organizationCategories" class="page-content">
+    <!-- Quản trị dự án start -->
+    <div class="card mb-1">
+      <div class="card-header">
+        <!-- <a data-toggle="collapse" href="#search" aria-expanded="true"><span
+            jhiTranslate="common.card.title.search"></span></a> -->
+        <a data-toggle="collapse" href="#search" aria-expanded="true"><span
+        >Quản trị dự án</span></a>
+      </div>
+      <div id="search" class="collapse show">
+        <div class="card-body">
+          <form [formGroup]="form" *ngIf="form" novalidate autocomplete="off">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.codeOrganization">Mã đơn vị</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right required">Mã dự án</label>
+
+                  <div class="col-sm-9">
+                    <input disabled="disabled" #code type="text" class="form-control" formControlName="code">
+
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.nameOrganization">Tên đơn vị</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right required">Tên dự án</label>
+                  <div class="col-sm-9">
+                    <input disabled="disabled" type="text" class="form-control" formControlName="name">
+                    <jhi-error-messages *ngIf="formControl['name'].hasError('required')"
+                                        [displayError]="isFieldValid('name')"
+                                        errorMsg="Tên dự án không được bỏ trống">
+                    </jhi-error-messages>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row dropdown form-custom-select">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.parentOrganization">Đơn vị cha</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right required">PM/Team Lead</label>
+                  <div class="col-sm-9 form-custom-select">
+                    <ng-select readonly="true"
+                               [items]="listUnit1$ | async"
+                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                               notFoundText="{{( unitSearch1 ?   'common.select.notFoundText' :  'common.select.required') | translate }}"
+                               bindLabel="firstName" bindValue="humanResourceId" formControlName="pmId"
+                               (search)="onSearchUnit1($event)"
+                               (clear)="onClearUnit1()"
+                               (close)="onSearchUnitClose1()">
+                      <ng-template ng-option-tmp let-item="item">
+                        <!-- {{item.firstName}}-{{item.email}} <br/> -->
+                        {{item.firstName}}-{{item.email}}  <br/>
+                      </ng-template>
+                    </ng-select>
+                    <span class="span-after-select"><i class="fa fa-angle-down" aria-hidden="true"></i></span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row dropdown form-custom-select">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.groupOrganization">Nhóm đơn vị</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right required">BA Manager</label>
+
+                  <div class="col-sm-9 form-custom-select">
+                    <ng-select readonly="true"
+                               [items]="listUnit2$ | async"
+                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                               notFoundText="{{( unitSearch2 ?   'common.select.notFoundText' :  'common.select.required') | translate }}"
+                               bindLabel="firstName" bindValue="humanResourceId" formControlName="baId"
+                               (search)="onSearchUnit2($event)"
+                               (clear)="onClearUnit2()"
+                               (close)="onSearchUnitClose2()">
+                      <ng-template ng-option-tmp let-item="item">
+                        {{item.firstName}}-{{item.email}} <br/>
+                      </ng-template>
+                    </ng-select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row dropdown form-custom-select">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.parentOrganization">Đơn vị cha</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right required">Test Leader</label>
+                  <div class="col-sm-9 form-custom-select">
+                    <ng-select readonly="true"
+                               [items]="listUnit3$ | async"
+                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                               notFoundText="{{( unitSearch3 ?   'common.select.notFoundText' :  'common.select.required') | translate }}"
+                               bindLabel="firstName" bindValue="humanResourceId" formControlName="testLeadId"
+                               (search)="onSearchUnit3($event)"
+                               (clear)="onClearUnit3()"
+                               (close)="onSearchUnitClose3()">
+                      <ng-template ng-option-tmp let-item="item">
+                        {{item.firstName}}-{{item.email}} <br/>
+                      </ng-template>
+                    </ng-select>
+                    <span class="span-after-select"><i class="fa fa-angle-down" aria-hidden="true"></i></span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row dropdown form-custom-select">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.groupOrganization">Nhóm đơn vị</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right required">QA Manager </label>
+
+                  <div class="col-sm-9 form-custom-select">
+                    <ng-select readonly="true"
+                               [items]="listUnit4$ | async"
+                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                               notFoundText="{{( unitSearch4 ?   'common.select.notFoundText' :  'common.select.required') | translate }}"
+                               bindLabel="firstName" bindValue="humanResourceId" formControlName="qaId"
+                               (search)="onSearchUnit4($event)"
+                               (clear)="onClearUnit4()"
+                               (close)="onSearchUnitClose4()">
+                      <ng-template ng-option-tmp let-item="item">
+                        {{item.firstName}}-{{item.email}} <br/>
+                      </ng-template>
+                    </ng-select>
+                    <span class="span-after-select"><i class="fa fa-angle-down" aria-hidden="true"></i></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <span style="font-weight: bold"
+                        class="col-sm-3 col-form-label custom-label-right">Thông tin đối tác</span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row dropdown form-custom-select">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.parentOrganization">Đơn vị cha</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right required">Đối tác</label>
+                  <div class="col-sm-9 form-custom-select">
+                    <ng-select readonly="true"
+                               [items]="listUnit5$ | async"
+                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                               notFoundText="{{( unitSearch5 ?   'common.select.notFoundText' :  'common.select.required') | translate }}"
+                               bindLabel="name" bindValue="id" formControlName="partnerID"
+                               (search)="onSearchUnit5($event)"
+                               (clear)="onClearUnit5()"
+                               (close)="onSearchUnitClose5()">
+                      <ng-template ng-option-tmp let-item="item">
+                        {{item.code }} - {{item.name}} <br/>
+                      </ng-template>
+                    </ng-select>
+                    <span class="span-after-select"><i class="fa fa-angle-down" aria-hidden="true"></i></span>
+                  </div>
+                </div>
+              </div>
+               <div class="col-md-6">
+                
+              </div> 
+            </div>
+
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.codeOrganization">Mã đơn vị</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right required ">PM Khách hàng</label>
+
+                  <div class="col-sm-9">
+                    <input disabled="disabled" type="text" class="form-control" formControlName="customerPmName">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.codeOrganization">Mã đơn vị</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right">Số điện thoại</label>
+
+                  <div class="col-sm-9">
+                    <input disabled="disabled" type="text" class="form-control" formControlName="customerPmPhone">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.codeOrganization">Mã đơn vị</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right">Email</label>
+
+                  <div class="col-sm-9">
+                    <input disabled="disabled" class="form-control" formControlName="customerEmail">
+<!--                    <jhi-error-messages-->
+<!--                      *ngIf="formControl['customerPmEmail'].hasError('invalid')"-->
+<!--                      [displayError]="isFieldValid('customerPmEmail')"-->
+<!--                      errorMsg="Email khách hàng không hợp lệ">-->
+<!--                    </jhi-error-messages>-->
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right">Đầu mối liên hệ</label>
+
+                  <div class="col-sm-9">
+                    <input #amName disabled="disabled" type="text" class="form-control" formControlName="amName">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right">Email</label>
+
+                  <div class="col-sm-9">
+                    <input #amEmail disabled="disabled" type="text" class="form-control" formControlName="amEmail">
+                  </div>
+                </div>
+              </div>
+            </div> -->
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.codeOrganization">Mã đơn vị</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right ">Đầu mối liên hệ</label>
+
+                  <div class="col-sm-9">
+                    <input disabled="disabled" type="text" class="form-control" formControlName="amName">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right">Số điện thoại</label>
+
+                  <div class="col-sm-9">
+                    <input disabled="disabled" type="text" class="form-control" formControlName="amPhone">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right">Email</label>
+
+                  <div class="col-sm-9">
+                    <input disabled="disabled" type="text" class="form-control" formControlName="amEmail" >
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <span style="font-weight: bold"
+                        class="col-sm-3 col-form-label custom-label-right">Phạm vi yêu cầu</span>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <span style="font-weight: bold"
+                        class="col-sm-3 col-form-label custom-label-right required">Kế hoạch khảo sát</span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label custom-label-right">
+                    <input disabled="disabled" type="checkbox" formControlName="ba" data-md-icheck/>
+                    <span class="checkmark">BA</span>
+
+                  </div>
+                  <div class="col-sm-3 col-form-label custom-label-right">
+
+                    <input disabled="disabled" type="checkbox" formControlName="dev" data-md-icheck/>
+                    <span class="checkmark">DEV</span>
+
+                  </div>
+                  <div class="col-sm-3 col-form-label custom-label-right">
+
+                    <input disabled="disabled" type="checkbox" formControlName="test" data-md-icheck/>
+                    <span class="checkmark">TEST</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label custom-label-right">
+                    <input
+                      disabled="disabled"
+                      formControlName="BaM"
+                      type="radio" id="BA Manager"
+                      name="KHKS" value="1"
+                      (change)="onProfitSelectionChange('BA')">
+                    <label for="BA Manager">BA Manager</label><br>
+                  </div>
+                  <div class="col-sm-3 col-form-label custom-label-right">
+                    <input
+                      disabled="disabled"
+                      formControlName="BaM"
+                      type="radio" id="PM/Team Lead"
+                      name="KHKS" value="0"
+                      (change)="onProfitSelectionChange('Lead')">
+                    <label for="PM/Team Lead">PM/Team Lead</label><br>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.codeOrganization">Mã đơn vị</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right">Tháng</label>
+
+                  <div class="col-sm-9">
+                    <input disabled="disabled" type="text" class="form-control" formControlName="month">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.nameOrganization">Tên đơn vị</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right">Ngày KH mong muốn hoàn thành </label>
+                  <div class="col-sm-9">
+                    <input disabled="disabled" type="text" class="form-control" formControlName="dateExpected">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <span style="font-weight: bold" class="col-sm-3 col-form-label custom-label-right">Danh sách tệp đính kèm ký </span>
+
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <table class="table table-bordered table-striped table-sm">
+                <thead style="background-color: #dae8ef;">
+                  <th style="text-align: center;"  class="small-width-table">STT</th>
+                  <th style="text-align: center; " class="medium-width-table">Tên tệp đính kèm</th>
+                  <th style="text-align: center;" class="medium-width-table">Ngày uploap</th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of attachDoc; let i = index">
+                    <td style="text-align: center;">{{i + 1}}</td>
+                    <td style="text-align: center;">{{item.name}}</td>
+                    <td style="text-align: center;">{{formatDate(item.createDate) | date: 'dd/MM/yyyy'}}</td>
+                    
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <br/>
+            <div class="row">
+              <label class="form-control-label">Ghi chú</label>
+              <div class="col-sm-9">
+                                <div contenteditable="true"
+                                [attr.disabled]="true" class="form-control single-line" [textContent]="description"></div>
+              </div>
+            </div>
+            <!-- <div class="col-md-12">
+              <div class="form-group row">
+                <label class="col-sm-1 col-form-label custom-label-right">Ghi chú </label>
+                <div class="col-sm-11">
+                  <div disabled="disabled" type="text" class="form-control"  >{{description}}</div>
+                </div>
+              </div>
+            </div> -->
+
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- Quản trị dự án end -->
+
+    <!-- --------------------------------------------- -->
+    <!-- Cập nhật  dự án start -->
+    <div class="card mb-1">
+      <div class="card-header">
+        <!-- <a data-toggle="collapse" href="#search" aria-expanded="true"><span
+            jhiTranslate="common.card.title.search"></span></a> -->
+        <a data-toggle="collapse" href="#search" aria-expanded="true"><span
+        ></span></a>
+      </div>
+      <div id="search" class="collapse show">
+        <div class="card-body">
+          <form [formGroup]="form" *ngIf="form" novalidate autocomplete="off">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row dropdown form-custom-select">
+                  <label class="col-sm-3 col-form-label custom-label-right" >Trạng thái tổng quan</label>
+                  <div class="col-sm-9 form-custom-select">
+                    <ng-select readonly="true"
+                               bindLabel="name" bindValue="id" formControlName="statusOverview"
+                               notFoundText="{{ 'common.select.notFoundText' | translate }}"
+                               placeholder="{{ 'common.select.option.default' | translate }}"
+                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                               [items]="groupOrganizationList"
+                               [multiple]="false"
+                               [searchFn]="customSearchFn"
+                               (change)="onChangePosition($event)"
+                               (clear)="onClearPosition()">
+                    </ng-select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row dropdown form-custom-select">
+                  <label class="col-sm-3 col-form-label custom-label-right">Trạng thái chi tiết</label>
+                  <div class="col-sm-9 form-custom-select">
+                    <ng-select readonly="true"
+                              bindLabel="name" bindValue="id" formControlName="statusDetail"
+                               notFoundText="{{ 'common.select.notFoundText' | translate }}"
+                               placeholder="{{ 'common.select.option.default' | translate }}"
+                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                               [items]="groupOrganizationList2"
+                               [multiple]="false"
+                               [searchFn]="customSearchFn"
+                               (change)="onChangePosition($event)"sub-menu
+                               (clear)="onClearPosition()"  >
+                    </ng-select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right">Ngày dự kiến bắt đầu
+                  </label>
+                  <div class="col-sm-9">
+                    <jhi-date-picker [isDisabled]="true" formControlName="startDate"></jhi-date-picker>
+                    <!-- <jhi-error-messages [displayError]="error === 'createdDate'" errorMsg="{{message}}"> -->
+
+                    </jhi-error-messages>
+                  </div>
+
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right">Ngày dự kiến kết thúc</label>
+                  <div class="col-sm-9">
+                    <jhi-date-picker [isDisabled]="true" formControlName="endDate"></jhi-date-picker>
+                    <!-- <jhi-error-messages [displayError]="error === 'endDate'" errorMsg="{{message}}"> -->
+                    </jhi-error-messages>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row dropdown form-custom-select">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.parentOrganization">Đơn vị cha</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right">Trạng thái thanh toán </label>
+                  <div class="col-sm-9 form-custom-select">
+                    <ng-select readonly="true"
+                               bindLabel="name" bindValue="id" formControlName="statusPayment"
+                               notFoundText="{{ 'common.select.notFoundText' | translate }}"
+                               placeholder="{{ 'common.select.option.default' | translate }}"
+                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                               [items]="groupOrganizationList1"
+                               [multiple]="false"
+                               [searchFn]="customSearchFn"
+                               (change)="onChangePosition($event)"
+                               (clear)="onClearPosition()">
+                    </ng-select>
+                    <span class="span-after-select"><i class="fa fa-angle-down" aria-hidden="true"></i></span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <a style="text-decoration: underline; font-style: italic; color: blue" (click)="openModal()">Liên kết dữ
+                  liệu với Redmine</a>
+
+              </div>
+            </div>
+
+
+            <hr>
+            <div *jhiHasPermission="['resource.qlda_xttda_ulnl']">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group row">
+                    <span style="font-weight: bold" class="col-sm-3 col-form-label custom-label-right">ULNL dự án
+                      (MM)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group row">
+                    <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.codeOrganization">Mã đơn vị</label> -->
+                    <label class="col-sm-3 col-form-label custom-label-right">ULNL sơ bộ (MM)</label>
+  
+                    <div class="col-sm-8">
+                      <input disabled type="text" class="form-control" formControlName="estimatePrelimiinary">
+                      
+                        
+                    </div>
+                    <img src="../../../../assets/img/notAvailable.png"
+                    (click)="openModalULNL(1)"
+                    *ngIf="model.statusPreliinary === 0"
+                   >
+                    <img src="../../../../assets/img/iconSuccess.png"
+                   *ngIf="model.statusPreliinary===1"
+                   (click)="openModalULNL(1)">
+                    <img src="../../../../assets/img/iconNotSuccess.png" [ngbTooltip]="model.reasonPrelimiinary"
+                   *ngIf="model.statusPreliinary===2"
+                   (click)="openModalULNL(1)">
+                   
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group row">
+                    <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.nameOrganization">Tên đơn vị</label> -->
+                    <label class="col-sm-3 col-form-label custom-label-right">ULNL nội bộ (MM)</label>
+                    <div class="col-sm-8">
+                      <input disabled type="text" class="form-control" formControlName="estimateInternal">
+                    </div>
+                    <img src="../../../../assets/img/notAvailable.png"
+                    (click)="openModalULNL(2)"
+                    *ngIf="model.statusInternal === 0"
+                   >
+                    <img src="../../../../assets/img/iconSuccess.png"
+                   *ngIf="model.statusInternal === 1"
+                   (click)="openModalULNL(2)"
+                   >
+                    <img src="../../../../assets/img/iconNotSuccess.png" [ngbTooltip]="model.reasonInternal"
+                   *ngIf="model.statusInternal === 2"
+                   (click)="openModalULNL(2)">
+                  </div>
+                </div>
+              </div>
+  
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group row">
+                    <label class="col-sm-3 col-form-label custom-label-right">NL thực tế (MM)</label>
+                    <div class="col-sm-8">
+                      <input disabled type="text" class="form-control" formControlName="estimateActual">
+                    </div>
+                  </div>
+                </div>
+  
+                <div class="col-md-6">
+                  <div class="form-group row">                 
+                    <div class="col-sm-9">
+                    </div>
+                  </div>
+                </div>
+              </div>
+  
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group row">
+                    <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.codeOrganization">Mã đơn vị</label> -->
+                    <label class="col-sm-3 col-form-label custom-label-right">ULNL chào giá (MM)</label>
+  
+                    <div class="col-sm-8">
+                      <input disabled type="text" class="form-control" formControlName="estimateOffer">
+                    </div>
+                    <img src="../../../../assets/img/notAvailable.png"
+                    (click)="openModalULNL(3)"
+                    *ngIf="model.statusOffer === 0"
+                   >
+                    <img src="../../../../assets/img/iconSuccess.png"
+                   *ngIf="model.statusOffer === 1"
+                   (click)="openModalULNL(3)">
+                    <img src="../../../../assets/img/iconNotSuccess.png" [ngbTooltip]="model.reasonOffer"
+                   *ngIf="model.statusOffer === 2"
+                   (click)="openModalULNL(3)">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group row">
+                    <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.nameOrganization">Tên đơn vị</label> -->
+                    <label class="col-sm-3 col-form-label custom-label-right">ULNL KH phê duyệt (MM)</label>
+                    <div class="col-sm-8">
+                      <input disabled type="text" class="form-control" formControlName="estimateLatch">
+                    </div>
+                    <img src="../../../../assets/img/notAvailable.png"
+                    (click)="openModalULNL(4)"
+                    *ngIf="model.statusLatch === 0"
+                   >
+                    <img src="../../../../assets/img/iconSuccess.png"
+                   *ngIf="model.statusLatch === 1"
+                   (click)="openModalULNL(4)">
+                    <img src="../../../../assets/img/iconNotSuccess.png" [ngbTooltip]="model.reasonLatch"
+                   *ngIf="model.statusLatch === 2"
+                   (click)="openModalULNL(4)">
+                  </div>
+                </div>
+              </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- Cập nhật  dự án end -->
+
+    <div class="d-flex justify-content-end table-footer">
+      <div style="margin: 0 auto 20px">
+        <button type="button" class="btn btn-danger btn-view-column">
+          <i class="fa fa-remove mr-2 center-icon" aria-hidden="true" (click)="closeEdit()"> Đóng</i>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+
+</perfect-scrollbar>
+
+

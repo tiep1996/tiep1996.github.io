@@ -1,0 +1,463 @@
+<jhi-spinner></jhi-spinner>
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <button routerLink="" class="btn btn-link btn-custom-bg" ngbTooltip="{{'common.tooltip.home' | translate}}">
+      <i class="fa fa-home icon-breadcrumb" aria-hidden="true"></i>
+    </button>
+  </li>
+  <li class="breadcrumb-item"><a >Quản lý dự án</a></li>
+  <li class="breadcrumb-item active" >Danh sách dự án</li>
+</ol>
+<perfect-scrollbar class="ps" [style.max-height.px]="height" (window:resize)="onResize()">
+  <div id="organizationCategories" class="page-content">
+    <div class="card mb-1">
+      <div class="card-header">
+        <a href="#search" ><span jhiTranslate="common.card.title.search"></span> </a>
+        <p style="float: right; margin-right: 10px ;text-decoration: underline; ; color: #0c69b5" (click)="advancedSearch()">Tìm kiếm nâng cao</p>
+      </div>
+      <div id="search" class="collapse show">
+        <div class="card-body">
+          <form [formGroup]="form" *ngIf="form" novalidate autocomplete="off">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right" >Dự án</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" formControlName="code" placeholder="Nhập mã hoặc tên dự án">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right" >Đối tác</label>
+                  <div class="col-sm-9 form-custom-select">
+                    <ng-select [items]="listUnit5$ | async"
+                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}" placeholder="Nhập mã hoặc tên đối tác"
+                               notFoundText="{{( unitSearch5 ?   'common.select.notFoundText' :  'common.select.required') | translate }}"
+                               bindLabel="name" bindValue="id" formControlName="partnerId"
+                               (search)="onSearchUnit5($event)"
+                               (clear)="onClearUnit5()"
+                               (close)="onSearchUnitClose5()"
+                               [searchFn]="customSearchFn2">
+                      <ng-template ng-option-tmp let-item="item">
+                        {{item.code }} - {{item.name}} <br />
+                      </ng-template>
+                    </ng-select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right" >ULNL KH phê duyệt (MM) Từ</label>
+                  <div class="col-sm-9">
+                    <div class="row" style="margin-left: 0px!important;">
+                      <div class="col-md-5">
+                        <div class="form-group row" style="margin: 0px!important;">
+                          <!-- <label class="col-sm-2 col-form-label custom-label-right" jhiTranslate=""></label> -->
+                          <!-- <div class="col-sm-12"> -->
+                          <input type="number" oninput="this.value = Math.abs(this.value)" class="form-control" formControlName="estimateLatchFrom">
+                          <jhi-error-messages [displayError]="checkEstimate() === 1">
+                          </jhi-error-messages>
+                          <!-- </div> -->
+                        </div>
+                      </div>
+                      <label class="col-sm-2 col-form-label custom-label-right" >Đến</label>
+                      <div class="col-sm-5">
+                        <div class="form-group row" style="margin: 0px!important;">
+                          <input type="number" oninput="this.value = Math.abs(this.value)" class="form-control" formControlName="estimateLatchTo">
+                        </div>
+                      </div>
+                      <!-- <div class="col-md-6">
+                      <div class="form-group row">
+                        <label class="col-sm-2 col-form-label custom-label-right" jhiTranslate="" >Đến</label>
+                        <div class="col-sm-10">
+                          <input type="number" class="form-control" formControlName="estimateLatchTo" >
+
+                        </div>
+                      </div>
+                    </div> -->
+                    </div>
+                  </div>
+
+                  <jhi-error-messages [displayError]="checkEstimate() === 1" errorMsg="{{message}}">
+                  </jhi-error-messages>
+                </div>
+              </div>
+
+
+
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="">PM/Team Leader</label>
+                  <div class="col-sm-9 form-custom-select">
+                    <ng-select [items]="listUnit1$ | async"
+                      clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                      notFoundText="{{( unitSearch1 ?   'common.select.notFoundText' :  'common.select.required') | translate }}"
+                      bindLabel="username" bindValue="humanResourceId" formControlName="pmId" placeholder="Nhập username hoặc email"
+                      (search)="onSearchUnit1($event)" (clear)="onClearUnit1()" (close)="onSearchUnitClose1()" [searchFn]="customSearchFn1">
+                      <ng-template ng-option-tmp let-item="item">
+                        {{item.username}}-{{item.email}} <br />
+                      </ng-template>
+                    </ng-select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+<!--            <div class="row">-->
+<!--              <div class="col-md-6">-->
+<!--                <div class="form-group row">-->
+<!--                  <label class="col-sm-3 col-form-label custom-label-right" >ULNL Chốt (MM) Từ</label>-->
+<!--                  <div class="col-sm-9">-->
+<!--                    <div class="row" style="margin-left: 0px!important;">-->
+<!--                      <div class="col-md-5">-->
+<!--                        <div class="form-group row" style="margin: 0px!important;">-->
+<!--                          &lt;!&ndash; <label class="col-sm-2 col-form-label custom-label-right" ></label> &ndash;&gt;-->
+<!--                          &lt;!&ndash; <div class="col-sm-12"> &ndash;&gt;-->
+<!--                          <input type="number" class="form-control" formControlName="estimateLatchFrom">-->
+<!--                          <jhi-error-messages [displayError]="checkEstimate() === 1">-->
+<!--                          </jhi-error-messages>-->
+<!--                          &lt;!&ndash; </div> &ndash;&gt;-->
+<!--                        </div>-->
+<!--                      </div>-->
+<!--                      <label class="col-sm-2 col-form-label custom-label-right" >Đến</label>-->
+<!--                      <div class="col-sm-5">-->
+<!--                        <div class="form-group row" style="margin: 0px!important;">-->
+<!--                          <input type="number" class="form-control" formControlName="estimateLatchTo">-->
+<!--                        </div>-->
+<!--                      </div>-->
+<!--                      &lt;!&ndash; <div class="col-md-6">-->
+<!--                      <div class="form-group row">-->
+<!--                        <label class="col-sm-2 col-form-label custom-label-right"  >Đến</label>-->
+<!--                        <div class="col-sm-10">-->
+<!--                          <input type="number" class="form-control" formControlName="estimateLatchTo" >-->
+
+<!--                        </div>-->
+<!--                      </div>-->
+<!--                    </div> &ndash;&gt;-->
+<!--                    </div>-->
+<!--                  </div>-->
+
+<!--                  <jhi-error-messages [displayError]="checkEstimate() === 1" errorMsg="{{message}}">-->
+<!--                  </jhi-error-messages>-->
+<!--                </div>-->
+<!--              </div>-->
+
+
+<!--              <div class="col-md-6">-->
+<!--                <div class="form-group row">-->
+<!--                  <label class="col-sm-3 col-form-label custom-label-right" >PM/Team Leader</label>-->
+<!--                  <div class="col-sm-9 form-custom-select">-->
+<!--                    <ng-select [items]="listUnit1$ | async"-->
+<!--                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"-->
+<!--                               notFoundText="{{( unitSearch1 ?   'common.select.notFoundText' :  'common.select.required') | translate }}"-->
+<!--                               bindLabel="firstName" bindValue="humanResourceId" formControlName="pmId"-->
+<!--                               (search)="onSearchUnit1($event)" (clear)="onClearUnit1()" (close)="onSearchUnitClose1()">-->
+<!--                      <ng-template ng-option-tmp let-item="item">-->
+<!--                        {{item.firstName}}-{{item.email}} <br />-->
+<!--                      </ng-template>-->
+<!--                    </ng-select>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+
+<br><br>
+
+
+            <div class="row" *ngIf="checkSearch">
+              <div class="col-md-6">
+                <div class="form-group row dropdown form-custom-select">
+                  <label class="col-sm-3 col-form-label custom-label-right">Trạng thái tổng quan</label>
+                  <div class="col-sm-9 form-custom-select">
+                    <ng-select bindLabel="name" bindValue="id" formControlName="statusOverview"
+                               notFoundText="{{ 'common.select.notFoundText' | translate }}"
+                               placeholder="{{ 'common.select.option.default' | translate }}"
+                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                               [items]="groupOrganizationList"
+                               [multiple]="false"
+                               [searchFn]="customSearchFn"
+                               (change)="onChangePosition($event)"sub-menu
+                               (clear)="onClearPosition()"  >
+                    </ng-select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row dropdown form-custom-select">
+                  <label class="col-sm-3 col-form-label custom-label-right" >Trạng thái chi tiết</label>
+                  <div class="col-sm-9 form-custom-select">
+                    <ng-select bindLabel="name" bindValue="id" formControlName="lstStatusDetail"
+                               notFoundText="{{ 'common.select.notFoundText' | translate }}"
+                               placeholder="{{ 'common.select.option.default' | translate }}"
+                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                               [items]="groupOrganizationList2"
+                               [multiple]="true"
+                               [searchFn]="customSearchFn"
+                               (change)="onChangePosition($event)"sub-menu
+                               (clear)="onClearPosition()"  >
+                    </ng-select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row" *ngIf="checkSearch">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right">Ngày dự kiến bắt đầu
+                  </label>
+                  <div class="col-sm-9 form-custom-select">
+                    <jhi-date-picker formControlName="startDate">
+                    </jhi-date-picker>
+                    <jhi-error-messages [displayError]="checkDate() === 1">
+                    </jhi-error-messages>
+                  </div>
+
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right">Ngày dự kiến kết thúc</label>
+                  <div class="col-sm-9 form-custom-select">
+                    <jhi-date-picker formControlName="endDate">
+                    </jhi-date-picker>
+                    <jhi-error-messages [displayError]="checkDate() === 1" errorMsg="{{message}}">
+                    </jhi-error-messages>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-center">
+              <button type="button" class="btn btn-primary" (click)="doSearch()" [disabled]="buttonDisable" style="">
+                <i class="fa fa-search mr-2" aria-hidden="true"></i><span jhiTranslate="common.button.search">Tìm
+                  kiếm</span>
+              </button>
+              <button *jhiHasPermission="['resource.qlda_dbda']" type="button" class="btn btn-primary"
+                style="background-color: #0dad9e; border-color:#0dad9e ;margin-left: 2%" (click)="synchronized()"
+                [disabled]="buttonDisable">
+                <i class="fa fa-refresh mr-2" aria-hidden="true"></i><span >Đồng bộ tiến độ dự án</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+      <div class="card">
+        <div class="card-header">
+          <a data-toggle="collapse" href="#dataTable" aria-expanded="true"><span
+              jhiTranslate="organizationCategories.titleTable"></span></a>
+        </div>
+        <div id="dataTable" class="collapse show">
+          <div class="card-body pt-2 pb-0 px-2">
+            <div class="row d-flex justify-content-end pr-1">
+              <button *jhiHasPermission="['resource.qlda_tda']" type="button" class="btn btn-primary"
+                (click)="openAddProject()">
+                <i class="fa fa-plus mr-2" aria-hidden="true"></i><span jhiTranslate="common.button.add" ngbTooltip="Thêm mới dự án">Thêm mới</span>
+              </button>
+              <div ngbDropdown class="d-inline-block choose-column" ngbTooltip="Ẩn/hiện cột">
+                <button type="button" id="dropdownBasic1" class="btn btn-primary btn-view-column ml-2" placement="top"
+                  ngbDropdownToggle>
+                  <i class="fa fa-list" aria-hidden="true"></i>
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                  <perfect-scrollbar class="ps" [style.max-height.vh]="SHOW_HIDE_COL_HEIGHT">
+                    <ng-container *ngFor="let col of columns; let i = index">
+                      <div class="custom-control custom-checkbox ">
+                        <input class="custom-control-input" type="checkbox" [checked]="col.isShow" id="check{{ i }}"
+                          (click)="toggleColumns(col)" />
+                        <label class="custom-control-label cursor-pointer" for="check{{ i }}">
+                          {{ col.value }}
+                        </label>
+                      </div>
+                    </ng-container>
+                  </perfect-scrollbar>
+                </div>
+              </div>
+
+            </div>
+          <div class="row">
+            <perfect-scrollbar id="scrollbarTable" class="ps">
+            <table class="table table-bordered table-hover table-striped">
+              <thead>
+              <tr class="text-center" jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
+                <th class="small-width-table" jhiTranslate="organizationCategories.orderNumber">STT</th>
+                <th class="large-width-table" jhiTranslate="organizationCategories.action"></th>
+                <th class="large-width-table" *ngIf="this.columns[0]?.isShow"><span>Mã dự án</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[1]?.isShow"><span>Tên dự án</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[2]?.isShow"  style="width: 100px"><span>Đối tác</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[3]?.isShow"  style="width: 100px"><span>PM/Team Lead</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[4]?.isShow"  style="width: 100px"><span>Test Leader</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[5]?.isShow"  style="width: 100px"><span>QA Manager</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[6]?.isShow"  style="width: 100px"><span>BA Manager</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[7]?.isShow" style="width: 200px"><span  >Trạng thái tổng quan</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[8]?.isShow"  style="width: 150px"><span >Trạng thái chi tiết</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[9]?.isShow" ><span >Thời gian nhận task/dự án</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[10]?.isShow"><span >PM Khách hàng</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[11]?.isShow"><span >Phạm vi yêu cầu</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[12]?.isShow"><span >Đầu mối</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[13]?.isShow"  style="width: 100px"><span >Ngày khách hàng mong muốn hoàn thành</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[14]?.isShow" style="width: 100px"><span >Master Plan</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[15]?.isShow" style="width: 100px"><span >UNLN sơ bộ</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[16]?.isShow" style="width: 100px"><span >ULNL thực tế (nội bộ)</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[17]?.isShow" style="width: 100px"><span >ULNL chào giá</span>
+                </th>
+                <th class="" *ngIf="this.columns[18]?.isShow" style="width: 100px"><span >ULNL KH phê duyệt (MM)</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[19]?.isShow" style="width: 100px"><span >Ngày gửi khách hàng kế hoạch</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[20]?.isShow" style="width: 100px"><span >Ngày dự kiến bắt đầu</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[21]?.isShow" style="width: 100px"><span >Ngày bàn giao KBKT</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[22]?.isShow" style="width: 100px"><span >Thực tế bàn giao KBKT</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[23]?.isShow" style="width: 100px"><span>Ngày hoàn thành dự kiến</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[24]?.isShow" style="width: 100px"><span>Ngày hoàn thành thực tế</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[25]?.isShow" style="width: 100px"><span >Tiến độ BA (%)</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[26]?.isShow" style="width: 100px"><span >Tiến độ Dev (%)</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[27]?.isShow" style="width: 100px"><span>Tiến độ Test (%)</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[28]?.isShow" style="width: 100px"><span >Tiến độ tài liệu TKCT (%)</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[29]?.isShow" style="width: 100px"><span>Tiến độ KBKT (%)</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[30]?.isShow" style="width: 100px"><span >Tiến độ Retest/Fixbug (%)</span>
+                </th>
+                <th class="large-width-table" *ngIf="this.columns[31]?.isShow"><span >Ghi chú</span>
+                </th>
+              </tr>
+              </thead>
+              <tbody *ngFor="let item of organizationCategoriesModel; index as i">
+              <tr class="text-center">
+                <td>{{itemsPerPage * (page - 1) + i + 1}}</td>
+                <td>
+                  <div class="group-action">
+                    <button *jhiHasPermission="['resource.qlda_xttda']"
+                            class="btn btn-light" placement="top"
+                            ngbTooltip="Xem thông tin dự án" (click)="openViewProject(item.projectId)"
+                            onclick="this.blur();">
+                      <i class="fa fa fa-info  icon-update" aria-hidden="true"></i></button>
+
+                          <button *jhiHasPermission="['resource.qlda_sda']" class="btn btn-light" placement="top"
+                            ngbTooltip="Sửa thông tin dự án" (click)="openEditProject(item.projectId)"
+                            onclick="this.blur();">
+                            <i class="fa fa-pencil-square-o icon-update" aria-hidden="true"></i></button>
+
+                          <button *jhiHasPermission="['resource.qlda_xda']" class="btn btn-light" placement="top"
+                            ngbTooltip="Xóa dự án" (click)="onDelete(item)" onclick="this.blur();">
+                            <i class="fa fa-trash-o icon-delete" aria-hidden="true"></i>
+                          </button>
+
+                          <button *jhiHasPermission="['resource.qlda_khda']" class="btn btn-light" placement="top"
+                            ngbTooltip="Kế hoạch dự án" (click)="openMasterPlan(item.projectId)" onclick="this.blur();">
+                            <i class="fa fa-send icon-info" aria-hidden="true"></i>
+                          </button>
+
+                          <button *jhiHasPermission="['resource.qlda_tnvda']" class="btn btn-light" placement="top"
+                            ngbTooltip="Thêm thành viên vào dự án" (click)="openModalAddHuman('addHumanResource', item)"
+                            onclick="this.blur();">
+                            <i class="fa fa-user-plus icon-update" aria-hidden="true"></i></button>
+
+                          <button *jhiHasPermission="['resource.qlda_spda']" class="btn btn-light" placement="top"
+                            ngbTooltip="Danh sách sản phẩm bàn giao" (click)="openModal(item.projectId)"
+                            onclick="this.blur();">
+                      <i class="fa fa-list-alt icon-update" aria-hidden="true"></i></button>
+
+                  </div>
+                </td>
+                <td *ngIf="this.columns[0]?.isShow" style="text-align: left">{{item.code}}</td>
+                <td *ngIf="this.columns[1]?.isShow" style="text-align: left">{{item.name}}</td>
+                <td *ngIf="this.columns[2]?.isShow" style="text-align: left">{{item.partnerCode}}</td>
+                <td *ngIf="this.columns[3]?.isShow" style="text-align: left">{{item.pmName}}</td>
+                <td *ngIf="this.columns[4]?.isShow" style="text-align: left">{{item.testLeaderName}}</td>
+                <td *ngIf="this.columns[5]?.isShow" style="text-align: left">{{item.qmName}}</td>
+                <td *ngIf="this.columns[6]?.isShow" style="text-align: left">{{item.bmName}}</td>
+                <td *ngIf="this.columns[7]?.isShow" style="text-align: left">{{item.statusOverviewName}}</td>
+                <td *ngIf="this.columns[8]?.isShow" style="text-align: left">{{item.statusDetailName}}</td>
+                <td *ngIf="this.columns[9]?.isShow" style="text-align: right">{{item.month}}</td>
+                <td *ngIf="this.columns[10]?.isShow" style="text-align: left">{{item.customerPmName}}</td>
+                <td *ngIf="this.columns[11]?.isShow" style="text-align: left">{{item.requireRange}}</td>
+                <td *ngIf="this.columns[12]?.isShow" style="text-align: left">{{item.amName}}</td>
+                <td *ngIf="this.columns[13]?.isShow" >{{item.dateExpected}}</td>
+                <td *ngIf="this.columns[14]?.isShow" style="text-align: left">{{item.masterPlan}}</td>
+                <td *ngIf="this.columns[15]?.isShow" style="text-align: right">{{item.estimatePrelimiinary}}</td>
+                <td *ngIf="this.columns[16]?.isShow" style="text-align: right">{{item.estimateActual}}</td>
+                <td *ngIf="this.columns[17]?.isShow" style="text-align: right">{{item.estimateOffer}}</td>
+                <td *ngIf="this.columns[18]?.isShow" style="text-align: right">{{item.estimateLatch}}</td>
+                <td *ngIf="this.columns[19]?.isShow" >{{item.dateSendingPlan | date: 'dd/MM/yyyy'}}</td>
+                <td *ngIf="this.columns[20]?.isShow" >{{item.startDate | date: 'dd/MM/yyyy'}}</td>
+                <td *ngIf="this.columns[21]?.isShow" >{{item.dateActualDelivery | date: 'dd/MM/yyyy'}}</td>
+                <td *ngIf="this.columns[22]?.isShow" >{{item.dateActualDelivery | date: 'dd/MM/yyyy'}}</td>
+                <td *ngIf="this.columns[23]?.isShow" >{{item.endDate | date: 'dd/MM/yyyy'}}</td>
+                <td *ngIf="this.columns[24]?.isShow" >{{item.dateActualComplete | date: 'dd/MM/yyyy'}}</td>
+                <td *ngIf="this.columns[25]?.isShow" style="text-align: right">{{item.baProgress}}</td>
+                <td *ngIf="this.columns[26]?.isShow" style="text-align: right">{{item.devProgress}}</td>
+                <td *ngIf="this.columns[27]?.isShow" style="text-align: right">{{item.testProgress}}</td>
+                <td *ngIf="this.columns[28]?.isShow" style="text-align: right">{{item.docProgress}}</td>
+                <td *ngIf="this.columns[29]?.isShow" style="text-align: right">{{item.kbktProgress}}</td>
+                <td *ngIf="this.columns[30]?.isShow" style="text-align: right">{{item.retestOrFixbugProgress}}</td>
+                <td *ngIf="this.columns[31]?.isShow" style="text-align: left">{{item.description}}</td>
+              </tr>
+              </tbody>
+            </table>
+            </perfect-scrollbar>
+          </div>
+          <div class="row justify-content-start py-2 pl-1  table-footer no-data"
+               *ngIf="!totalItems || totalItems === 0">
+            <p class="item-count" jhiTranslate="common.table.noData"></p>
+          </div>
+          <div class="d-flex justify-content-end table-footer" [hidden]="totalItems === 0">
+            <div class="row justify-content-center">
+              <p class="item-count">{{'common.table.totalItems'| translate}} {{totalItems}}</p>
+              <ngb-pagination *ngIf="totalItems" [collectionSize]="totalItems" [(page)]="page"
+                              [pageSize]="itemsPerPage"
+                              [maxSize]="maxSizePage" [rotate]="true" [boundaryLinks]="true"
+                              (pageChange)="loadPage(page)">
+              </ngb-pagination>
+              <jhi-page-size (onChangePageSize)="changePageSize($event)"></jhi-page-size>
+            </div>
+<!--            <div class="row justify-content-start py-2 pl-1  table-footer no-data"-->
+<!--              *ngIf="!totalItems || totalItems === 0">-->
+<!--              <p class="item-count" jhiTranslate="common.table.noData"></p>-->
+<!--            </div>-->
+<!--            <div class="d-flex justify-content-end table-footer" [hidden]="totalItems === 0">-->
+<!--              <div class="row justify-content-center">-->
+<!--                <p class="item-count">{{'common.table.totalItems'| translate}} {{totalItems}}</p>-->
+<!--                <ngb-pagination *ngIf="totalItems" [collectionSize]="totalItems" [(page)]="page"-->
+<!--                  [pageSize]="itemsPerPage" [maxSize]="maxSizePage" [rotate]="true" [boundaryLinks]="true"-->
+<!--                  (pageChange)="loadPage(page)">-->
+<!--                </ngb-pagination>-->
+<!--                <jhi-page-size (onChangePageSize)="changePageSize($event)"></jhi-page-size>-->
+<!--              </div>-->
+<!--            </div>-->
+          </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</perfect-scrollbar>

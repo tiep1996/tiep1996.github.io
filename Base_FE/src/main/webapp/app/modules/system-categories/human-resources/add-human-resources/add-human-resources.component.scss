@@ -1,0 +1,6 @@
+.form-control-label.required:after{
+  color: #dc3545;
+  content: '(*)';
+  position: absolute;
+  margin-left: 2px;
+}

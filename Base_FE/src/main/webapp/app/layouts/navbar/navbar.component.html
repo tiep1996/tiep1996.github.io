@@ -1,0 +1,112 @@
+<!-- START HEADER -->
+<div class="header ">
+  <!-- START MOBILE SIDEBAR TOGGLE -->
+  <a href="#" class="btn-link toggle-sidebar hidden-lg-up pg pg-menu" data-toggle="sidebar">
+  </a>
+  <!-- END MOBILE SIDEBAR TOGGLE -->
+  <div style="margin-left:15%">
+    <div class="brand inline">
+      <!-- <img src="../../../assets/img/logo.png" alt="logo" width="99" height="36"> -->
+        <p style="font-size: 16px;font-weight: bold;color:#0c69b5">Hệ thống quản lý dự án nội bộ</p>
+    </div>
+  </div>
+  <div class="d-flex align-items-center" *ngIf="hasPermission">
+    <!-- START NOTIFICATION LIST -->
+    <ul class="hidden-md-down notification-list no-margin hidden-sm-down b-grey b-l b-r no-style p-l-30 p-r-20">
+      <li class="p-r-10 inline">
+        <div class="dropdown" ngbDropdown>
+          <a href="javascript:;" id="notification" class="header-icon pg pg-world"
+             ngbDropdownToggle (click)="closeNotification()">
+            <!--            <span class="badge badge-danger notification"-->
+            <!--                  *ngIf="notificationPopupList && notificationPopupList.length > 0">{{notificationPopupList.length}}-->
+            <!--            </span>       -->
+            <span class="badge badge-danger notification"
+                  *ngIf="notificationTotalList && notificationTotalList.length > 0">{{notificationTotalList.length}}
+            </span>
+          </a>
+          <!-- START Notification Dropdown -->
+          <div class="dropdown-menu notification-toggle" ngbDropdownMenu aria-labelledby="notification">
+            <!-- START Notification -->
+            <div class="notification-panel">
+              <div class="card no-border m-0">
+                <div *ngIf="!notificationList || notificationList.length === 0">
+                  <div class="form-group pt-3 pl-3">
+                    <label class="form-control-label">
+                      Không có thông báo nào
+                    </label>
+                  </div>
+                </div>
+                <div class="card-body pt-0 pb-0 list-detail" *ngIf="notificationList && notificationList.length > 0">
+                  <div class="row">
+                    <div class="col-md-8 mt-2 pt-1 mb-2 pb-1 d-flex flex-column">
+                      <div class="form-group">
+                        <div class="one-noti-detail " *ngIf="selectedItem">
+                          <label class="form-control-label cursor-pointer">
+                            {{selectedItem.title}}
+                          </label>
+                          <p class="content">{{selectedItem.createdDate | date:"dd/MM/yyyy  HH:mm:ss"}}</p>
+                          <div class="content" [innerHTML]="selectedItem.content | decodeHtml"></div>
+                        </div>
+                      </div>
+                      <div class="mt-3" *ngIf="selectedItem && selectedItem.attFileName">
+                        <div class="form-group mb-0">
+                          <label class="form-control-label" jhiTranslate="notification.attachFile">Tài liệu đính
+                            kèm</label>
+                        </div>
+                        <div class="row mb-2">
+                          <button type="button" class="btn btn-link pt-0"
+                                  >{{selectedItem.attFileName}}</button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4 pt-3 pr-0">
+                      <perfect-scrollbar id="scrollbarNotification" class="ps" [style.max-height.vh]="43">
+                        <div class="form-group">
+                          <div class="one-noti card mb-2 cursor-pointer"
+                               *ngFor="let item of notificationList, index as i"
+                               >
+                            <div [ngClass]="getSelected(i) ? 'selected pt-2 pl-2' : ' pt-2 pl-2'">
+                              <label class="form-control-label cursor-pointer "> {{item.title}}</label>
+                              <p>{{item.shortContent}}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </perfect-scrollbar>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- END Notification -->
+          </div>
+          <!-- END Notification Dropdown -->
+        </div>
+      </li>
+    </ul>
+    <!-- START User Info-->
+    <div class="pull-left p-r-10 fs-14 font-heading hidden-md-down">
+      <span class="semi-bold" style="color: #ff0000">{{getUserName()?.lastName}} {{getUserName()?.firstName}}</span>
+    </div>
+    <div class="dropdown pull-right hidden-md-down" ngbDropdown>
+      <button class="profile-dropdown-toggle" ngbDropdownToggle type="button" id="profileDropdown">
+        <span class="thumbnail-wrapper d32 circular inline">
+          <i class="fa fa-user-circle icon-logo" aria-hidden="true"></i>
+          <!--          <img src="../../../assets/img/profiles/avatar.jpg" alt="" data-src="assets/img/profiles/avatar.jpg"-->
+          <!--               data-src-retina="assets/img/profiles/avatar_small2x.jpg" width="32" height="32">-->
+        </span>
+      </button>
+      <div class="dropdown-menu dropdown-menu-right profile-dropdown" ngbDropdownMenu aria-labelledby="profileDropdown">
+        <a  (click)="openChangePassword()" class="clearfix dropdown-item pt-1" >
+          <span class="pull-left" ><a >Đổi mật khẩu</a></span>
+          <span class="pull-right"><i class="fa fa-key"></i></span>
+        </a>
+        <a class="clearfix dropdown-item pt-1" (click)="logOut()">
+          <span class="pull-left">Đăng xuất</span>
+          <span class="pull-right"><i class="pg-power"></i></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END HEADER -->
+<jhi-notification></jhi-notification>

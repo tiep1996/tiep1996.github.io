@@ -1,0 +1,32 @@
+<perfect-scrollbar class="ps">
+    <div class="custom-modal-large" jhiModalDrag [handle]="handle">
+        <div class="modal-header" #handle>
+            <h5 class="modal-title mt-0">Xác nhận kế hoạch</h5>
+
+            <button type="button" class="close" aria-label="Close" (click)="onCloseAddModal()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    <div class="modal-body" style = "width: 95%; margin: 0px auto">
+        <div class="row">
+            <div style="font-weight: normal">Lý do</div>
+            <input type="text" class="form-control" maxlength="255"  [(ngModel)]="reason">
+        </div>
+        <div class="row">
+            <div style="font-weight: normal">Ghi chú</div>
+            <input type="text" class="form-control" maxlength="255" [(ngModel)]="note">
+        </div>
+    </div>
+    <div class="d-flex justify-content-end table-footer">
+        <div style="margin: 0 auto 20px">
+            <button type="button" class="btn btn-danger btn-view-column" (click)="confirm(reason,note,2)" >
+                <i class="fa fa-remove mr-2 center-icon" aria-hidden="true"> Từ chối</i>
+            </button>
+
+            <button type="button" class="btn btn-primary btn-view-column" (click)="confirm(reason,note,1)">
+                <i class="fa fa-plus mr-2 center-icon" aria-hidden="true"> Xác nhận </i>
+            </button>
+        </div>
+    </div>
+</perfect-scrollbar>

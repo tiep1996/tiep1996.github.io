@@ -1,0 +1,18 @@
+[contenteditable="true"].single-line {
+  display: block;
+  height: auto;
+  overflow: hidden;
+}
+div.item {
+  /* To correctly align image, regardless of content height: */
+  vertical-align: top;
+  display: inline-block;
+  /* To horizontally center images and caption */
+  text-align: center;
+  /* The width of the container also implies margin around the images. */
+  width: 120px;
+}
+.caption {
+  /* Make the caption a block so it occupies its own line. */
+  display: block;
+}

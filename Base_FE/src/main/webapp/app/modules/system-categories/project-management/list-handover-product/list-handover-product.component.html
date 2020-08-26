@@ -1,0 +1,151 @@
+<!--<div class="custom-modal-large" jhiModalDrag [handle]="handle">-->
+<!--  <div class="modal-header" #handle>-->
+<!--    <h5 class="modal-title mt-0">Danh sách sản phẩm bàn giao khách hàng</h5>-->
+
+<!--&lt;!&ndash;    <button type="button" class="close" aria-label="Close" (click)="onCloseAddModal()">&ndash;&gt;-->
+<!--&lt;!&ndash;      <span aria-hidden="true">&times;</span>&ndash;&gt;-->
+<!--&lt;!&ndash;    </button>&ndash;&gt;-->
+<!--  </div>-->
+<!--</div>-->
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <button routerLink="" class="btn btn-link btn-custom-bg" ngbTooltip="{{'common.tooltip.home' | translate}}">
+      <i class="fa fa-home icon-breadcrumb" aria-hidden="true"></i>
+    </button>
+  </li>
+  <li class="breadcrumb-item"><a>Quản lý dự án</a></li>
+  <li class="breadcrumb-item"><a>Danh sách dự án</a></li>
+  <li class="breadcrumb-item active" >Danh sách sản phẩm bàn giao khách hàng</li>
+</ol>
+<perfect-scrollbar class="ps" [style.max-height.px]="height" (window:resize)="onResize()">
+  <div class="modal-body">
+    <div style="font-weight: bold; color: #0c69b5">Danh sách sản phẩm</div>
+    <div class="row d-flex justify-content-end pr-1">
+      <button type="button" class="btn btn-primary" (click)="export()">
+        <i class="fa fa-upload mr-2 center-icon"></i><span>Export Excel</span>
+      </button>
+    </div>
+    <br>
+    <div class="row">
+      <table class="table table-bordered table-hover table-striped" style="width: 95%; margin: 0px auto">
+        <thead>
+        <tr class="text-center" jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
+          <th class="small-width-table">STT</th>
+          <th class="medium-width-table">Hành động</th>
+          <th>Sản phẩm <span style="color: red">(*)</span></th>
+          <th>Trạng thái</th>
+          <th>Ghi chú</th>
+        </tr>
+        </thead>
+        <tr *ngFor="let row of fieldArray; let i = index;" class="hover-highlight">
+          <td class="text-center">{{i + 1}}</td>
+          <td class="text-center">
+            <div class="group-action">
+              <button class="btn btn-light" placement="top"
+                      ngbTooltip="{{'common.tooltip.action.update' | translate}}"
+                      (click)="updateRow($event, i)" *ngIf="isEdit[i] && permissionCheck('resource.qlda_spda_sspbg')">
+                <i class="fa fa-pencil-square-o icon-update" aria-hidden="true"></i></button>
+              <button class="btn btn-light" placement="top"
+                      ngbTooltip="{{'common.tooltip.action.delete' | translate}}"
+                      (click)="deleteFieldValue(i)" *ngIf="isEdit[i] && permissionCheck('resource.qlda_spda_xspbg')">
+                <i class="fa fa-trash-o icon-delete" aria-hidden="true"></i>
+              </button>
+              <!-- btn không sửa -->
+              <button class="btn btn-light" placement="top" ngbTooltip="Hủy bỏ"
+                      (click)="onNotUpdate(i)" *ngIf="!isEdit[i]">
+                <i class="fa fa-remove icon-remove" aria-hidden="true"
+                   style="color: #ff7851"></i>
+              </button>
+              <!-- btn có sửa -->
+              <button class="btn btn-light" placement="top" ngbTooltip="Đồng ý"
+                      (click)="onUpdate(i)" *ngIf="!isEdit[i]">
+                <i class="fa fa-check icon-check" aria-hidden="true"
+                   style="color: #28a745"></i>
+              </button>
+            </div>
+          </td>
+          <td>
+            <div #productName [textContent]="fieldArray[i].productName" maxlength="255"
+                 (input)="fieldArray[i].productName = productName.innerText" class="form-control single-line"
+                 contenteditable="true" [attr.disabled]="isEdit[i] ? true : null">
+            </div>
+<!--            <span style="color:red" *ngIf="fieldArray[i].productName.length<1">-->
+<!--                  Trường Sản phẩm không được để trống.-->
+<!--              </span>-->
+          </td>
+          <td class=" col-sm-6">
+            <div class="form-custom-select">
+              <ng-select [items]="statusOptions" [disabled]="isEdit[i]"
+                         clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                         notFoundText="{{( unitSearch ?   'common.select.notFoundText' :  'common.select.required') | translate }}"
+                         [multiple]="false"
+                         bindLabel="statusValue"
+                         bindValue="statusId"
+                         placeholder="Chọn trạng thái"
+                         [(ngModel)]="fieldArray[i].statusHandover">
+                <ng-template ng-option-tmp let-item="item">
+                  {{item.statusValue}} <br/>
+                </ng-template>
+              </ng-select>
+            </div>
+          </td>
+          <td>
+            <div #productDescription class="form-control single-line" [textContent]="fieldArray[i].description" maxlength="1000"
+                 (input)="fieldArray[i].description = productDescription.innerText" contenteditable="true"
+                 [attr.disabled]="isEdit[i] ? true : null"></div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="row" style="margin-top: 1em; margin-left: 1em">
+      <div class="row d-flex pr-1 col-sm-6">
+        <button *jhiHasPermission="['resource.qlda_spda_tspbg']" type="button" class="btn btn-primary" ngbTooltip="Thêm mới"
+                (click)="addFieldValue()"
+                [disabled]="disableAddNew">
+          <i class="fa fa-plus" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+
+  </div>
+  <div class="row pr-1"
+       style="margin-left: 5px; margin-bottom: 5px;padding-left: 1%; width: 99%; background-color: #0273d4;">
+    <h5 class="modal-title mt-0" style="color:white; margin-bottom: 5px;">Gợi ý các sản phẩm bàn giao</h5>
+  </div>
+  <div class="modal-footer">
+  </div>
+  <div class="row">
+    <div class="tcell">
+      <div>1. Checklist yêu cầu</div>
+      <div>2. Phân tích yêu cầu</div>
+      <div>3. Thiết kế tổng thể</div>
+    </div>
+    <div class="tcell">
+      <div>4. Thiết kế chi tiết</div>
+      <div>5. Thiết kế cơ sở dữ liệu</div>
+      <div>6. Hướng dẫn sử dụng</div>
+    </div>
+    <div class="tcell">
+      <div>7. Kịch bản kiểm thử</div>
+      <div>8. Hướng dẫn vận hành khai thác</div>
+      <div>9. Kết quả quét SonarQ</div>
+    </div>
+    <div class="tcell">
+      <div>10. Kết quả quét ATTT</div>
+    </div>
+  </div>
+  <hr>
+  <br>
+<div class="row pr-1" style="width: 50%; margin: 0px auto; padding-left: 10%;">
+  <button #cancelBtn type="button" class="btn btn-light" (click)="onCloseAddModal()" style="margin: 5px">
+    <i class="fa fa-times mr-2" aria-hidden="true"></i><span> Hủy
+        bỏ</span>
+  </button>
+  <button type="submit" class="btn btn-primary" (click)="onSubmitData()"
+          style="margin: 5px">
+    <i class="fa fa-floppy-o mr-2" aria-hidden="true"></i><span
+    jhiTranslate="common.button.confirm.save">Ghi lại</span>
+  </button>
+</div>
+<br><br>
+</perfect-scrollbar>

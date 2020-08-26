@@ -1,0 +1,58 @@
+server:
+  port: 8063
+  servlet:
+    context-path: /project-service
+eureka:
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+    service-url:
+      defaultZone: http://localhost:8061/eureka
+
+spring:
+  application:
+    name: project-service
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    show-sql: true
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  #    ddl-auto: update
+  datasource.url: jdbc:mariadb://192.168.100.122:3306/QLDA
+  datasource.username: iist
+  datasource.password: Hanoi@1900
+  datasource.driver-class-name: org.mariadb.jdbc.Driver
+  #      h2.console.enabled: true
+  datasource:
+    hikari:
+      connectionTimeout: 30000
+      idleTimeout: 600000
+      maxLifetime: 1800000
+      maximumPoolSize: 6
+  servlet:
+    multipart:
+      max-file-size: 150MB
+      max-request-size: 150MB
+
+# url Redmine
+
+urlUser: http://192.168.100.90/redmine/users.json
+
+keyAdmin: fad2925dc25f16dca03dcdb6ced10728e565766b
+
+#Lich dong bo
+autoSynchronized: 0 30 6,12,0 * * *
+autoSendMail:  0 0 8 * * *
+
+urlForgotPassword: http://localhost:9000/qlda/#/forgot-password/
+
+
+#host cross
+#hostCross: http://192.168.100.122:8069
+hostCross: http://localhost:9000
+
+#folder-upload
+#folderUpload: /home/iist/services/qlda-service-phase1/fileUpload/
+folderUpload: D:/fileUpload/

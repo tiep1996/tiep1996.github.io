@@ -1,0 +1,398 @@
+<jhi-spinner></jhi-spinner>
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <button routerLink="" class="btn btn-link btn-custom-bg" ngbTooltip="{{'common.tooltip.home' | translate}}">
+      <i class="fa fa-home icon-breadcrumb" aria-hidden="true"></i>
+    </button>
+  </li>
+  <li class="breadcrumb-item"><a>Danh sách dự án</a></li>
+  <li class="breadcrumb-item active">Kế hoạch dự án</li>
+</ol>
+<perfect-scrollbar class="ps" [style.max-height.px]="height" (window:resize)="onResize()">
+  <!-- <jhi-timeline-chart></jhi-timeline-chart> -->
+  <div id="organizationCategories" class="page-content">
+    <div class="card mb-1">
+      <div class="card-header">
+        <a><span>Thông tin dự án</span></a>
+      </div>
+      <div id="search" class="collapse show">
+        <div class="card-body">
+          <form [formGroup]="form" *ngIf="form" novalidate autocomplete="off">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right">Mã dự
+                    án</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" formControlName="projectId"
+                           disabled="true" [(ngModel)]="masterPlanModel.code">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right">Tên dự án</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" formControlName="name" disabled="true"
+                           [(ngModel)]="masterPlanModel.name">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right">Ngày gửi khách hàng kế
+                    hoạch</label>
+                  <div class="col-sm-9">
+                    <jhi-date-picker formControlName="dateSendingPlan" (click)="onChangeDate(1)"
+                                     [(ngModel)]="masterPlanModel.dateSendingPlan" >
+                    </jhi-date-picker>
+                    <jhi-error-messages [displayError]="error === 'createdDate'"
+                                        errorMsg="{{message}}">
+                    </jhi-error-messages>
+                  </div>
+
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right">Ngày demo</label>
+                  <div class="col-sm-9">
+                    <jhi-date-picker formControlName="dateDemo" (click)="onChangeDate(2)"
+                                     [(ngModel)]="masterPlanModel.dateDemo">
+                    </jhi-date-picker>
+                    <jhi-error-messages [displayError]="error === 'endDate'" errorMsg="{{message}}">
+                    </jhi-error-messages>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right">Ngày bàn giao KBKT</label>
+                  <div class="col-sm-9">
+                    <jhi-date-picker formControlName="dateDeliveryKBKT" (click)="onChangeDate(1)"
+                                     [(ngModel)]="masterPlanModel.dateDeliveryKBKT">
+                    </jhi-date-picker>
+                    <jhi-error-messages [displayError]="error === 'createdDate'"
+                                        errorMsg="{{message}}">
+                    </jhi-error-messages>
+                  </div>
+
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right">Ngày thực tế bàn giao
+                    KBKT</label>
+                  <div class="col-sm-9">
+                    <jhi-date-picker formControlName="actualDateDelivery" (click)="onChangeDate(2)"
+                                     [(ngModel)]="masterPlanModel.actualDateDelivery">
+                    </jhi-date-picker>
+                    <jhi-error-messages [displayError]="error === 'endDate'" errorMsg="{{message}}">
+                    </jhi-error-messages>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right">Ngày thực tế hoành
+                    thành</label>
+                  <div class="col-sm-9">
+                    <jhi-date-picker formControlName="endDate" (click)="onChangeDate(1)"
+                                     [(ngModel)]="masterPlanModel.endDate">
+                    </jhi-date-picker>
+                    <jhi-error-messages [displayError]="error === 'createdDate'"
+                                        errorMsg="{{message}}">
+                    </jhi-error-messages>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-3" style="text-align-last: center;">
+                <div class="item">
+                  <label class="caption" style="white-space: nowrap;">BA
+                    Manager</label>
+                  <img src="../../../../assets/img/notAvailable.png"
+                       (click)="lstProjectPlan.length!==0&&position.includes('BM')&&openModal(1)"
+                       [ngStyle]=" lstProjectPlan.length!==0&&position.includes('BM')?{'cursor': 'pointer'} : {'': ''}"
+                       *ngIf="masterPlanModel.statusBA === 0">
+                  <img src="../../../../assets/img/iconSuccess.png"
+                       *ngIf="masterPlanModel.statusBA === 1" [ngbTooltip]="masterPlanModel.noteBA">
+                  <img src="../../../../assets/img/iconNotSuccess.png" [ngbTooltip]="masterPlanModel.reasonBA"
+                       *ngIf="masterPlanModel.statusBA === 2">
+                </div>
+              </div>
+              <div class="col-md-3" style="text-align-last: center;">
+                <div class="item">
+                  <!-- <div class="form-group row"> -->
+                  <label class="caption" style="white-space: nowrap;">Test
+                    Leader</label>
+
+                  <img src="../../../../assets/img/notAvailable.png"
+                       (click)="lstProjectPlan.length!==0&&position.includes('TL')&&openModal(2)"
+                       [ngStyle]=" lstProjectPlan.length!==0&&position.includes('TL')?{'cursor': 'pointer'} : {'': ''}"
+                       *ngIf="masterPlanModel.statusTest === 0">
+                  <img src="../../../../assets/img/iconSuccess.png"
+                       *ngIf="masterPlanModel.statusTest === 1" [ngbTooltip]="masterPlanModel.noteTest">
+                  <img src="../../../../assets/img/iconNotSuccess.png"
+                       *ngIf="masterPlanModel.statusTest === 2" [ngbTooltip]="masterPlanModel.reasonTest">
+                </div>
+              </div>
+              <div class="col-md-3" style="text-align-last: center;">
+                <div class="item">
+                  <label class="caption"
+                         style="white-space: nowrap;">PM/Teamlead</label>
+                  <img src="../../../../assets/img/notAvailable.png"
+                       (click)="lstProjectPlan.length!==0&&position.includes('PM')&&openModal(3)"
+                       [ngStyle]=" lstProjectPlan.length!==0&&position.includes('PM')?{'cursor': 'pointer'} : {'': ''}"
+                       *ngIf="masterPlanModel.statusPM === 0">
+                  <img src="../../../../assets/img/iconSuccess.png"
+                       *ngIf="masterPlanModel.statusPM === 1" [ngbTooltip]="masterPlanModel.notePM">
+                  <img src="../../../../assets/img/iconNotSuccess.png"
+                       *ngIf="masterPlanModel.statusPM === 2" [ngbTooltip]="masterPlanModel.reasonPM">
+                </div>
+              </div>
+              <div class="col-md-3" style="text-align-last: center;">
+                <div class="item">
+                  <label class="caption" style="white-space: nowrap;">QA
+                    Manager</label>
+                  <img src="../../../../assets/img/notAvailable.png"
+                       (click)="lstProjectPlan.length!==0&&position.includes('QM')&&openModal(4)"
+                       [ngStyle]=" lstProjectPlan.length!==0&&position.includes('QM')?{'cursor': 'pointer'} : {'': ''}"
+                       *ngIf="masterPlanModel.statusQA === 0">
+                  <img src="../../../../assets/img/iconSuccess.png"
+                       *ngIf="masterPlanModel.statusQA === 1" [ngbTooltip]="masterPlanModel.noteQA">
+                  <img src="../../../../assets/img/iconNotSuccess.png"
+                       *ngIf="masterPlanModel.statusQA === 2" [ngbTooltip]="masterPlanModel.reasonQA">
+                </div>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <a>
+                    <span>Kế hoạch dự án
+                    </span>
+        </a>
+      </div>
+      <div id="dataTable" class="collapse show">
+        <div class="card-body pt-2 pb-0 px-2">
+          <div class="row d-flex justify-content-end pr-1">
+            <button type="button" class="btn btn-primary" (click)="export()">
+              <i class="fa fa-upload mr-2 center-icon"></i><span>Export Excel</span>
+            </button>
+          </div>
+          <div class="row">
+            <table mdbTable mdbTableScroll scrollX="true" maxWidth="400"
+                   class="table table-bordered table-hover table-striped">
+              <thead>
+              <tr class="text-center" jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
+                <th rowspan="2" class="small-width-table"
+                    jhiTranslate="contractManagement.orderNumber">STT
+                </th>
+                <th rowspan="2" class="medium-width-table" jhiTranslate="contractManagement.action">
+                  Hành Động
+                </th>
+                <th rowspan="2"><span>Module/Chức năng</span><span style="color:red;"> (*)</span>
+                <th rowspan="2"><span>Milestone</span><span style="color: red;"> (*)</span>
+                </th>
+                <th rowspan="2"><span>Người thực hiện</span><span style="color: red;"> (*)</span>
+                </th>
+                <th rowspan="2"><span>Ngày bắt đầu</span><span style="color: red;"> (*)</span>
+                </th>
+                <th rowspan="2"><span>Ngày kết thúc</span>
+                </th>
+                <th rowspan="2"><span>Thời hạn</span><span style="color: red;"> (*)</span>
+                </th>
+                <th rowspan="2"><span>Ghi chú</span>
+                </th>
+              </tr>
+              </thead>
+              <tbody *ngFor="let item of lstProjectPlan; index as i">
+              <tr>
+                <td class="text-center">{{itemsPerPage * (page - 1) + i + 1}}</td>
+                <td class="text-center">
+                  <div class="group-action">
+                    <!-- update record-->
+                    <button class="btn btn-light" placement="top"
+                            ngbTooltip="{{'common.tooltip.action.update' | translate}}"
+                            (click)="onEdit(i)" *ngIf="isEdit[i] "
+                            [disabled]="buttonDisabled || !check()">
+                      <i class="fa fa-pencil-square-o icon-update" aria-hidden="true"></i>
+                    </button>
+                    <!-- delete record -->
+                    <button class="btn btn-light" placement="top"
+                            ngbTooltip="{{'common.tooltip.action.delete' | translate}}"
+                            (click)="onDelete(i)" *ngIf="isEdit[i]" [disabled]="buttonDisabled || !check()">
+                      <i class="fa fa-trash-o icon-delete" aria-hidden="true"></i>
+                    </button>
+                    <button class="btn btn-light" placement="top" ngbTooltip="Hủy bỏ"
+                            (click)="onNotUpdate(i)" *ngIf="!isEdit[i]">
+                      <i class="fa fa-remove icon-remove" aria-hidden="true"
+                         style="color: #ff7851"></i>
+                    </button>
+                    <!-- btn có sửa -->
+                    <button class="btn btn-light" placement="top" ngbTooltip="Đồng ý"
+                            (click)="onUpdate(i)" *ngIf="!isEdit[i]">
+                      <i class="fa fa-check icon-check" aria-hidden="true"
+                         style="color: #28a745"></i>
+                    </button>
+                  </div>
+                </td>
+                <!-- Module/chức năng -->
+                <td [ngClass]="lstProjectPlan[i].module.length<1 && lstProjectPlan[i].clicked == true ? 'has-error':''">
+                  <textarea *ngIf="!isEdit[i]" type="text" [disabled]="isEdit[i]" class="form-control"
+                            [(ngModel)]="item.module" maxlength="255">
+                  </textarea>
+                  <div *ngIf="isEdit[i]" #module [textContent]="item.module" (input)="item.module = module.innerText"
+                       type="text"
+                       class="form-control single-line"
+                       contenteditable="true"
+                       [attr.disabled]="true"
+                       data-maxlength="255">
+                    <!--                                        [ngClass]="lstProjectPlan[i].module.length<1 && lstProjectPlan[i].clicked == true ? 'has-error':''">-->
+                  </div>
+                  <!-- <span style="color:red"
+                      *ngIf="lstProjectPlan[i].module.length<1 && lstProjectPlan[i].clicked == true">
+                      Trường MileStones không được để trống.
+                  </span> -->
+                </td>
+                <!-- MileStones -->
+                <td
+                  [ngClass]="lstProjectPlan[i].mileStone.length<1 && lstProjectPlan[i].clicked == true ? 'has-error':''">
+                                        <textarea *ngIf="!isEdit[i]" type="text" [disabled]="isEdit[i]"
+                                                  class="form-control"
+                                                  [(ngModel)]="item.mileStone" maxlength="255">
+                                        </textarea>
+                  <div *ngIf="isEdit[i]" #mileStone [textContent]="item.mileStone"
+                       (input)="item.mileStone = mileStone.innerText"
+                       type="text"
+                       class="form-control single-line"
+                       contenteditable="true"
+                       [attr.disabled]="true"
+                       data-maxlength="255">
+                  </div>
+                  <!-- <span style="color:red"
+                      *ngIf="lstProjectPlan[i].mileStone.length<1 && lstProjectPlan[i].clicked == true">
+                      Trường MileStones không được để trống.
+                  </span> -->
+                </td>
+                <!-- Người thực hiện -->
+                <td
+                  [ngClass]="lstProjectPlan[i].humanResourceId === '' && lstProjectPlan[i].clicked == true ? 'has-error':''">
+                  <ng-select [items]="lstHumanResource" [disabled]="isEdit[i]"
+                             clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+
+                             [multiple]="false" bindLabel="username" bindValue="humanResourceId"
+                             [(ngModel)]="item.humanResourceId">
+                    <ng-template ng-option-tmp let-item="item">
+                      {{item.username}} <br/>
+                    </ng-template>
+                  </ng-select>
+                  <!-- <span style="color:red"
+                      *ngIf="lstProjectPlan[i].humanResourceId === '' && lstProjectPlan[i].clicked == true ">
+                      Trường người thực hiện không được để trống.
+                  </span> -->
+                </td>
+                <!-- Ngày bắt đầu -->
+                <td>
+                  <input type="date" [disabled]="isEdit[i]" class="form-control"
+                         [(ngModel)]="item.startDate"></td>
+                <!-- Ngày kết thúc -->
+                <td
+                  [ngClass]="this.lstProjectPlan[i].startDate>this.lstProjectPlan[i].endDate && lstProjectPlan[i].clicked == true ? 'has-error':''">
+                  <input type="date" [disabled]="isEdit[i]" class="form-control"
+                         [(ngModel)]="item.endDate">
+                  <!-- <span style="color:red"
+                      *ngIf="this.lstProjectPlan[i].startDate>this.lstProjectPlan[i].endDate && lstProjectPlan[i].clicked == true">
+                      Ngày kết thúc phải sau ngày bắt đầu
+                  </span> -->con vert
+                </td>
+                <!-- Thời hạn -->
+                <td
+                  [ngClass]="lstProjectPlan[i].deadline === '' && lstProjectPlan[i].clicked == true ? 'has-error':''">
+                  <input type="date" [disabled]="isEdit[i]" class="form-control"
+                         [(ngModel)]="item.deadline">
+                  <!-- <span style="color:red"
+                      *ngIf="lstProjectPlan[i].deadline === '' && lstProjectPlan[i].clicked == true">
+                      Trường thời hạn không được để trống.
+                  </span> -->
+                </td>
+                <!-- Ghi chú -->
+                <td>
+                                        <textarea *ngIf="!isEdit[i]" type="text" [disabled]="isEdit[i]"
+                                                  class=" form-control"
+                                                  maxlength="255"
+                                                  [(ngModel)]="item.description">
+                                        </textarea>
+                  <div *ngIf="isEdit[i]" #description [textContent]="item.description"
+                       (input)="item.description = description.innerText"
+                       type="text"
+                       class="form-control single-line"
+                       contenteditable="true"
+                       [attr.disabled]="true"
+                       data-maxlength="255">
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <button *ngIf="check()" type="button"
+                  class="btn btn-primary btn-view-column ml-2" (click)="onClickAddEffort()"
+                  style="width: 60px; margin-top: 15px;" [disabled]="buttonDisabled || !check()" ngbTooltip="Thêm mới">
+            <i class="fa fa-plus mr-2" aria-hidden="true"></i>
+          </button>
+
+          <div class="row justify-content-start py-2 pl-1  table-footer no-data"
+               *ngIf="lstProjectPlan.length ===  0">
+            <p class="item-count" jhiTranslate="common.table.noData"></p>
+          </div>
+          <!--
+          <div class="d-flex justify-content-end table-footer" [hidden]="totalItems === 0">
+              <div class="row justify-content-center">
+                  <p class="item-count">{{'common.table.totalItems'| translate}} {{totalItems}}</p>
+                  <ngb-pagination *ngIf="totalItems" [collectionSize]="totalItems" [(page)]="page"
+                      [pageSize]="itemsPerPage" [maxSize]="maxSizePage" [rotate]="true" [boundaryLinks]="true"
+                      (pageChange)="loadPage(page)">
+                  </ngb-pagination>
+
+                  <jhi-page-size (onChangePageSize)="changePageSize($event)"></jhi-page-size>
+              </div>
+          </div> -->
+
+        </div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end table-footer">
+      <div style="margin: 0 auto 20px">
+        <button type="button" class="btn btn-danger btn-view-column" (click)="onBack()"
+                *ngIf="check()">
+          <i class="fa fa-remove mr-2 center-icon" aria-hidden="true"> Hủy bỏ</i>
+        </button>
+        <button type="button" class="btn btn-primary btn-view-column" (click)="onSave()"
+                [disabled]="!change" *ngIf="check()">
+          <i class="fa fa-plus mr-2 center-icon" aria-hidden="true"> Ghi lại </i>
+        </button>
+        <button type="button" class="btn btn-danger btn-view-column" (click)="onBackView()" *ngIf="!check()">
+          <i class="fa fa-remove mr-2 center-icon" aria-hidden="true"> Trở lại</i>
+        </button>
+      </div>
+    </div>
+  </div>
+</perfect-scrollbar>
+

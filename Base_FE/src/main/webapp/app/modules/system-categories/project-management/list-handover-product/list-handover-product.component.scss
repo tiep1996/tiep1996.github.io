@@ -1,0 +1,16 @@
+.tcell{
+  margin-left: 5%;
+}
+[contenteditable="true"].single-line {
+  display: block;
+  height: auto;
+  overflow: hidden;
+}
+[contenteditable="true"].single-line br {
+  display:none;
+}
+
+[contenteditable="true"].single-line * {
+  display:inline;
+  white-space:nowrap;
+}

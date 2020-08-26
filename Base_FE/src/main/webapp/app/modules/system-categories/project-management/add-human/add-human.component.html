@@ -1,0 +1,293 @@
+<!-- <jhi-spinner></jhi-spinner>
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <button routerLink="" class="btn btn-link btn-custom-bg" ngbTooltip="{{'common.tooltip.home' | translate}}">
+      <i class="fa fa-home icon-breadcrumb" aria-hidden="true"></i>
+    </button>
+  </li>
+  <li class="breadcrumb-item"><a >Quản lý dự án</a></li>
+  <li class="breadcrumb-item" ><a >Danh sách dự án</a></li>
+  <li class="breadcrumb-item active" >Thêm mới thành viên vào dự án</li>
+</ol>
+<perfect-scrollbar class="ps" [style.max-height.px]="height" (window:resize)="onResize()">
+</perfect-scrollbar> -->
+
+<jhi-spinner></jhi-spinner>
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <button routerLink="" class="btn btn-link btn-custom-bg" ngbTooltip="{{'common.tooltip.home' | translate}}">
+      <i class="fa fa-home icon-breadcrumb" aria-hidden="true"></i>
+    </button>
+  </li>
+  <li class="breadcrumb-item"><a>Quản lý dự án</a></li>
+  <li class="breadcrumb-item active">Danh sách dự án</li>
+</ol>
+<perfect-scrollbar class="ps" [style.max-height.px]="height" (window:resize)="onResize()">
+  <div id="organizationCategories">
+    <div class="card mb-1">
+      <div class="card-header">
+        <a href="#">
+          <span jhiTranslate="contractManagement.titleForm">Thông tin chung</span></a>
+      </div>
+      <div id="search" class="collapse show">
+        <div class="card-body">
+          <!-- start -->
+          <form [formGroup]="form">
+            <div class="row col-md-12">
+              <div class="col-md-6">
+                <div class="form-group row dropdown form-custom-select">
+                  <label class="col-sm-4 col-form-label custom-label-right">BA Team({{ countBa }} thành viên)</label>
+                  <label class="col-sm-5 col-form-label custom-label-left" style="font-weight: 100;">BA
+                    Manager:{{ bmName }} </label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row dropdown form-custom-select">
+                  <label class="col-sm-4 col-form-label custom-label-right">Dev Team({{ countDev }} thành viên)</label>
+                  <label class="col-sm-4 col-form-label custom-label-left"
+                    style="font-weight: 100;">PM/TeamLead:{{ pmteamLeadName }} </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="row col-md-12">
+              <div class="col-md-6">
+                <div class="form-group row dropdown form-custom-select">
+                  <label class="col-sm-4 col-form-label custom-label-right">Tester Team({{ countTest }} thành
+                    viên)</label>
+                  <label class="col-sm-5 col-form-label custom-label-left" style="font-weight: 100;">Test
+                    Lead:{{ testLeadName }} </label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row dropdown form-custom-select">
+                  <label class="col-sm-4 col-form-label custom-label-right">QA Team({{ countQa }} thành viên)</label>
+                  <label class="col-sm-4 col-form-label custom-label-left" style="font-weight: 100;">QA
+                    Manager:{{ qmName }} </label>
+                </div>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <a href="#"> <span style="font-size: 14px !important;">Danh sách thành viên dự án</span></a>
+    </div>
+    <perfect-scrollbar id="scrollbarTable" class="ps">
+      <div class="card-body pt-1 px-3">
+        <div class="row">
+          <table *ngIf="ischeck" class="table table-bordered fixed">
+            <colgroup>
+              <col class="w5per">
+              <col class="w10per">
+              <col class="w15per">
+              <col class="w15per">
+              <col class="w15per">
+              <col class="w15per">
+              <col class="w15per">
+            </colgroup>
+            <thead>
+              <tr class="text-center">
+                <th>
+                  <span>STT</span>
+                </th>
+
+                <th *ngIf="!hiddenView">
+                  <span>Hành động</span>
+                </th>
+
+                <th>
+                  <span class="required">Vai trò trong dự án</span>
+                </th>
+
+                <th>
+                  <span class="required">Nhân sự</span>
+                </th>
+
+                <th>
+                  <span class="required">Ngày tham gia</span>
+                </th>
+
+                <th>
+                  <span class="required">Ngày kết thúc</span>
+                </th>
+
+                <th>
+                  <span class="required">% Nguồn lực </span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of lstHuman; index as k; last as last">
+                <td class="medium-width-table" style="text-align: center">
+                  {{((currentPage - 1)*numberPerPage)+(k + 1)}}</td>
+                <td *ngIf="!hiddenView">
+                  <!-- Hành động -->
+                  <div class="group-action">
+                    <!-- btn sửa -->
+                    <button class="btn btn-light" placement="top"
+                      ngbTooltip="{{'common.tooltip.action.update' | translate}}" (click)="onClickEditEffort(k)"
+                      *ngIf="isEdit[k]">
+                      <i class="fa fa-pencil-square-o icon-update" aria-hidden="true"></i>
+                    </button>
+                    <!-- btn xóa -->
+                    <button class="btn btn-light" placement="top"
+                      ngbTooltip="{{'common.tooltip.action.delete' | translate}}" (click)="onDelete(k)"
+                      *ngIf="isEdit[k]">
+                      <i class="fa fa-trash-o icon-delete" aria-hidden="true"></i>
+                    </button>
+                    <!-- btn không sửa -->
+                    <button class="btn btn-light" placement="top" ngbTooltip="Hủy bỏ" (click)="onNotUpdate(k)"
+                      *ngIf="!isEdit[k]">
+                      <i class="fa fa-remove icon-remove" aria-hidden="true" style="color: #dc3545"></i>
+                    </button>
+                    <!-- btn có sửa -->
+                    <button class="btn btn-light" placement="top" ngbTooltip="Đồng ý" (click)="onUpdateEffort(k)"
+                      *ngIf="!isEdit[k]">
+                      <i class="fa fa-check icon-check" aria-hidden="true" style="color: #28a745"></i>
+                    </button>
+                  </div>
+                </td>
+                <td [ngClass]="displayFieldHasError('roleId')">
+                  <ng-select bindLabel="code" bindValue="code" [(ngModel)]="item.department" [disabled]="isEdit[k]"
+                    notFoundText="{{ 'common.select.notFoundText' | translate }}" placeholder="-Lựa chon-"
+                    clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}" [items]="listRole"
+                    [multiple]="false" [searchFn]="customSearchFn" (change)="onChangePosition1($event)"
+                    (clear)="onClearPosition1()">
+                  </ng-select>
+                </td>
+                <td style="text-align: left;">
+                  <!-- Nhân sự-->
+                  <ng-select [items]="item.listUnit2$ | async" [disabled]="isEdit[k]"
+                    clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                    placeholder="Nhập username hoặc email"
+                    notFoundText="{{( unitSearch4 ?   'common.select.notFoundText' :  'common.select.required') | translate }}"
+                    bindLabel="username" bindValue="humanResourceId" name="item.humanResourceId"
+                    [(ngModel)]="item.humanResourceId" (search)="onSearchUnit2($event,k)" (clear)="onClearUnit2()"
+                    (change)="onChange($event, k)" (close)="onSearchUnitClose2()">
+                    <ng-template ng-option-tmp let-item="item">
+                      {{item.username}}--{{item.email}} <br />
+                    </ng-template>
+                  </ng-select>
+                  <jhi-error-messages *ngIf="formControl['humanResourcesId'].hasError('required')"
+                    [displayError]="isFieldValid('humanResourcesId')" errorMsg="Nhân sự không được bỏ trống">
+                  </jhi-error-messages>
+                </td>
+
+                <td scope="col">
+                  <input type="date" [disabled]="isEdit[k]" class="form-control" style="padding: 5px"
+                    [(ngModel)]="item.dateJoin">
+                </td>
+                <td scope="col">
+                  <input type="date" [disabled]="isEdit[k]" class="form-control" style="padding: 5px"
+                    [(ngModel)]="item.dateOut"></td>
+                <td>
+                  <input type="number" [disabled]="isEdit[k]" class=" form-control" style="padding: 5px"
+                    [(ngModel)]="item.resources">
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table *ngIf="!ischeck" class="table table-bordered fixed">
+            <colgroup>
+              <col class="w5per">
+              <col class="w10per">
+              <col class="w15per">
+              <col class="w15per">
+              <col class="w15per">
+              <col class="w15per">
+              <col class="w15per">
+            </colgroup>
+            <thead>
+              <tr class="text-center">
+                <th>
+                  <span>STT</span>
+                </th>
+                <th>
+                  <span>Vai trò trong dự án</span>
+                </th>
+                <th>
+                  <span>Nhân sự</span>
+                </th>
+                <th>
+                  <span>Ngày tham gia</span>
+                </th>
+                <th>
+                  <span>Ngày kết thúc</span>
+                </th>
+                <th>
+                  <span>% Nguồn lực</span>
+                </th>
+                <th>
+                  <span>Manday</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of lstHuman; index as k; last as last">
+                <td style="text-align: center">{{((currentPage - 1)*numberPerPage)+(k + 1)}}</td>
+                <td scope="col">
+                  <input type="text" [disabled]="true" class="form-control" style="padding: 5px"
+                    [(ngModel)]="item.department">
+                </td>
+                <td scope="col">
+                  <input type="text" [disabled]="true" class="form-control" style="padding: 5px"
+                    [(ngModel)]="item.username">
+                </td>
+                <td scope="col">
+                  <input type="text" [disabled]="true" class="form-control" style="padding: 5px"
+                    [(ngModel)]="item.dateJoin">
+                </td>
+                <td scope="col">
+                  <input type="text" [disabled]="true" class="form-control" style="padding: 5px"
+                    [(ngModel)]="item.dateOut">
+                <td>
+
+                  <input type="text" [disabled]="true" class="form-control" style="padding: 5px"
+                    [(ngModel)]="item.resources">
+                </td>
+                <td>
+                  <input type="text" [disabled]="true" class="form-control" style="padding: 5px" [(ngModel)]="item.kpi">
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <button type="button" class="btn btn-primary btn-view-column" *ngIf="!hiddenView" (click)="onClickAddEffort()"
+            style="width: 40px;padding-left: 12px;padding-right: 12px; margin-top: 10px;" [disabled]="buttonDisabled">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- </perfect-scrollbar> -->
+
+      <div class="d-flex justify-content-end table-footer">
+        <div style="margin: 0 auto 20px">
+          <button type="button" class="btn btn-light ng-star-inserted" (click)="onCloseAddModal()" *ngIf="ischeck">
+            <i class="fa fa-times mr-2" aria-hidden="true"> Hủy bỏ</i>
+          </button>
+
+          <button type="button" class="btn btn-primary btn-view-column" (click)="onsaveHuman()"
+            [disabled]="buttonDisabled" *ngIf="ischeck">
+            <i class="fa fa-check mr-2" aria-hidden="true"> Ghi lại</i>
+          </button>
+
+          <button type="button" class="btn btn-primary" style="background-color: #0dad9e; border-color:#0dad9e;"
+            (click)="loadProjectMemberHistory()" *ngIf="ischeck">
+            <i class="fa fa-refresh mr-2" aria-hidden="true"></i><span ngbTooltip="Xem lịch sử nhân sự của dự án">Lịch
+              sử</span>
+          </button>
+
+          <button type="button" class="btn btn-primary" (click)="back()" *ngIf="!ischeck">
+            <i class="fa fa-refresh mr-2" aria-hidden="true"></i><span ngbTooltip="Quay lại">Quay lại</span>
+          </button>
+        </div>
+      </div>
+  </div>
+</perfect-scrollbar>

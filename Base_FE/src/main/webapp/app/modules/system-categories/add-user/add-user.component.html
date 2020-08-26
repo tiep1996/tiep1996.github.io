@@ -1,0 +1,511 @@
+<jhi-spinner></jhi-spinner>
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <button routerLink="" class="btn btn-link btn-custom-bg" ngbTooltip="{{'common.tooltip.home' | translate}}">
+      <i class="fa fa-home icon-breadcrumb" aria-hidden="true"></i>
+    </button>
+  </li>
+  <li class="breadcrumb-item"><a jhiTranslate="">Quản lý dự án</a></li>
+  <li class="breadcrumb-item active" jhiTranslate="">Thêm mới dự án</li>
+</ol>
+<perfect-scrollbar class="ps" [style.max-height.px]="height" (window:resize)="onResize()">
+  <div id="organizationCategories" class="page-content">
+    <!-- Quản trị dự án start -->
+    <div class="card mb-1">
+      <div class="card-header">
+        <!-- <a data-toggle="collapse" href="#search" aria-expanded="true"><span
+            jhiTranslate="common.card.title.search"></span></a> -->
+        <a data-toggle="collapse" href="#search" aria-expanded="true"><span
+        >Quản trị dự án</span></a>
+      </div>
+      <div id="search" class="collapse show">
+        <div class="card-body">
+          <form [formGroup]="form" *ngIf="form" novalidate autocomplete="off">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row" [ngClass]="displayFieldHasError('code')">
+                  <label class="col-sm-3 col-form-label custom-label-right required">Mã dự án </label>
+
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" (blur)="checkCodeExist('code')"  formControlName="code"  maxlength="255"/>
+                    <jhi-error-messages *ngIf="checkSpace" [displayError]="checkSpace"
+                                        errorMsg="Mã dư án không được chứa dấu cách, Không là tiếng việt có dấu">
+                    </jhi-error-messages>
+                    <jhi-error-messages *ngIf="formControl['code'].hasError('required')"
+                                        [displayError]="isFieldValid('code')"
+                                        errorMsg="Mã dự án không được bỏ trống">
+                    </jhi-error-messages>
+                    <jhi-error-messages *ngIf="checkCode" [displayError]="checkCode"
+                                        errorMsg="Mã dự án đã tồn tại">
+                    </jhi-error-messages>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row" [ngClass]="displayFieldHasError('name')">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.nameOrganization">Tên đơn vị</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right required">Tên dự án</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" formControlName="name" maxlength="255">
+                    <jhi-error-messages *ngIf="formControl['name'].hasError('required')"
+                                        [displayError]="isFieldValid('name')"
+                                        errorMsg="Tên dự án không được bỏ trống">
+                    </jhi-error-messages>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row dropdown form-custom-select" [ngClass]="displayFieldHasError('pmId')">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.parentOrganization">Đơn vị cha</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right required">PM/Team Lead</label>
+                  <div class="col-sm-9 form-custom-select">
+                    <ng-select [items]="listUnit1$ | async"
+                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                               placeholder="Nhập username hoặc email"
+                               notFoundText="{{( unitSearch1 ?   'common.select.notFoundText' :  'common.select.required') | translate }}"
+                               bindLabel="username" bindValue="humanResourceId" formControlName="pmId"
+                               (search)="onSearchUnit1($event)"
+                               (clear)="onClearUnit1()"
+                               (close)="onSearchUnitClose1()"
+                               [searchFn]="customSearchFn1">
+                      <ng-template ng-option-tmp let-item="item">
+                        {{item.username}}-{{item.email}} <br/>
+                      </ng-template>
+                    </ng-select>
+
+                    <jhi-error-messages *ngIf="formControl['pmId'].hasError('required')"
+                                        [displayError]="isFieldValid('pmId')"
+                                        errorMsg="PM/Team Lead không được bỏ trống">
+                    </jhi-error-messages>
+                    <span class="span-after-select"><i class="fa fa-angle-down" aria-hidden="true"></i></span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row dropdown form-custom-select" [ngClass]="displayFieldHasError('baId')">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.groupOrganization">Nhóm đơn vị</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right required">BA Manager</label>
+
+                  <div class="col-sm-9 form-custom-select">
+                    <ng-select [items]="listUnit2$ | async"
+                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                               placeholder="Nhập username hoặc email"
+                               notFoundText="{{( unitSearch2 ?   'common.select.notFoundText' :  'common.select.required') | translate }}"
+                               bindLabel="username" bindValue="humanResourceId" formControlName="baId"
+                               (search)="onSearchUnit2($event)"
+                               (clear)="onClearUnit2()"
+                               (close)="onSearchUnitClose2()"
+                               [searchFn]="customSearchFn1">
+                      <ng-template ng-option-tmp let-item="item">
+                        {{item.username}}-{{item.email}} <br/>
+                      </ng-template>
+                    </ng-select>
+                   <jhi-error-messages *ngIf="formControl['baId'].hasError('required')"
+                                        [displayError]="isFieldValid('baId')"
+                                        errorMsg="BA Manager không được bỏ trống">
+                    </jhi-error-messages>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row dropdown form-custom-select" [ngClass]="displayFieldHasError('testLeadId')">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.parentOrganization">Đơn vị cha</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right required">Test Leader</label>
+                  <div class="col-sm-9 form-custom-select">
+                    <ng-select [items]="listUnit3$ | async"
+                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                               placeholder="Nhập username hoặc email"
+                               notFoundText="{{( unitSearch3 ?   'common.select.notFoundText' :  'common.select.required') | translate }}"
+                               bindLabel="username" bindValue="humanResourceId" formControlName="testLeadId"
+                               (search)="onSearchUnit3($event)"
+                               (clear)="onClearUnit3()"
+                               (close)="onSearchUnitClose3()"
+                               [searchFn]="customSearchFn1">
+                      <ng-template ng-option-tmp let-item="item">
+                        {{item.username}}-{{item.email}} <br/>
+                      </ng-template>
+                    </ng-select>
+                   <jhi-error-messages *ngIf="formControl['testLeadId'].hasError('required')"
+                                        [displayError]="isFieldValid('testLeadId')"
+                                        errorMsg="Test Lead không được bỏ trống">
+                    </jhi-error-messages>
+                    <span class="span-after-select"><i class="fa fa-angle-down" aria-hidden="true"></i></span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row dropdown form-custom-select" [ngClass]="displayFieldHasError('qaId')">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.groupOrganization">Nhóm đơn vị</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right required">QA Manager </label>
+
+                  <div class="col-sm-9 form-custom-select">
+                    <ng-select [items]="listUnit4$ | async"
+                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                               placeholder="Nhập username hoặc email"
+                               notFoundText="{{( unitSearch4 ?   'common.select.notFoundText' :  'common.select.required') | translate }}"
+                               bindLabel="username" bindValue="humanResourceId" formControlName="qaId"
+                               (search)="onSearchUnit4($event)"
+                               (clear)="onClearUnit4()"
+                               (close)="onSearchUnitClose4()"
+                               [searchFn]="customSearchFn1">
+                      <ng-template ng-option-tmp let-item="item">
+                        {{item.username}}-{{item.email}} <br/>
+                      </ng-template>
+                    </ng-select>
+                  <jhi-error-messages *ngIf="formControl['qaId'].hasError('required')"
+                                        [displayError]="isFieldValid('qaId')"
+                                        errorMsg="QA Manager không được bỏ trống">
+                    </jhi-error-messages>
+                    <span class="span-after-select"><i class="fa fa-angle-down" aria-hidden="true"></i></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <span style="font-weight: bold"
+                        class="col-sm-3 col-form-label custom-label-right">Thông tin đối tác</span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row dropdown form-custom-select" [ngClass]="displayFieldHasError('partnerId')">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.parentOrganization">Đơn vị cha</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right required">Đối tác</label>
+                  <div class="col-sm-9 form-custom-select">
+                    <ng-select [items]="listUnit5$ | async"
+                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                               placeholder="Nhập mã hoặc tên đối tác"
+                               notFoundText="{{( unitSearch5 ?   'common.select.notFoundText' :  'common.select.required') | translate }}"
+                               bindLabel="name" bindValue="id" formControlName="partnerId"
+                               (search)="onSearchUnit5($event)"
+                               (clear)="onClearUnit5()"
+                               (close)="onSearchUnitClose5()"
+                               [searchFn]="customSearchFn">
+                      <ng-template ng-option-tmp let-item="item">
+                        {{item.code }}      -       {{item.name}} <br/>
+                      </ng-template>
+                    </ng-select>
+                    <jhi-error-messages *ngIf="formControl['partnerId'].hasError('required')"
+                                                                [displayError]="isFieldValid('partnerId')"
+                                                                errorMsg="Đối tác không được bỏ trống">
+                  </jhi-error-messages>
+                    <span class="span-after-select"><i class="fa fa-angle-down" aria-hidden="true"></i></span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6"></div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row" [ngClass]="displayFieldHasError('customerPmName')">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.codeOrganization">Mã đơn vị</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right required">PM Khách hàng</label>
+
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" formControlName="customerPmName" maxlength="255">
+                    <jhi-error-messages *ngIf="formControl['customerPmName'].hasError('required')"
+                                        [displayError]="isFieldValid('customerPmName')"
+                                        errorMsg="PM khách hàng không được bỏ trống">
+                    </jhi-error-messages>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.codeOrganization">Mã đơn vị</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right">Số điện thoại</label>
+
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" formControlName="customerPmPhone">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.codeOrganization">Mã đơn vị</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right">Email</label>
+
+                  <div class="col-sm-9">
+                    <input class="form-control" formControlName="customerPmEmail"  (blur)="onBlurEmail('customerPmEmail')">
+                    <jhi-error-messages
+                      *ngIf="formControl['customerPmEmail'].hasError('invalid')"
+                      [displayError]="isFieldValid('customerPmEmail')"
+                      errorMsg="Email khách hàng không hợp lệ">
+                    </jhi-error-messages>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.codeOrganization">Mã đơn vị</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right ">Đầu mối liên hệ</label>
+
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" formControlName="amName">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.codeOrganization">Mã đơn vị</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right">Số điện thoại</label>
+
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" formControlName="amPhone">
+                  </div>
+                </div>
+                <div class="form-group row" >
+                  <!-- <label class="col-sm-3 col-form-label custom-label-right" jhiTranslate="organizationCategories.codeOrganization">Mã đơn vị</label> -->
+                  <label class="col-sm-3 col-form-label custom-label-right">Email</label>
+
+                  <div class="col-sm-9" >
+                    <input type="text" class="form-control" formControlName="amEmail"  (blur)="onBlurEmail('amEmail')" >
+                    <jhi-error-messages
+                      *ngIf="formControl['amEmail'].hasError('invalid')"
+                      [displayError]="isFieldValid('amEmail')"
+                      errorMsg="Email đầu mối liên hệ không hợp lệ">
+                    </jhi-error-messages>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <span style="font-weight: bold"
+                        class="col-sm-3 col-form-label custom-label-right">Phạm vi yêu cầu</span>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <span style="font-weight: bold" class="col-sm-3 col-form-label custom-label-right required">Kế hoạch khảo sát</span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="col-md-3"></div>
+                <div class="form-group col-md-9">
+                  <div class="col-sm-3 col-form-label custom-label-left">
+                    <input type="checkbox" formControlName="ba" data-md-icheck/>
+                    <span class="checkmark">BA</span>
+
+                  </div>
+                  <div class="col-sm-3 col-form-label custom-label-left">
+
+                    <input type="checkbox" formControlName="dev" data-md-icheck/>
+                    <span class="checkmark">DEV</span>
+
+                  </div>
+                  <div class="col-sm-3 col-form-label custom-label-left">
+
+                    <input type="checkbox" formControlName="test" data-md-icheck/>
+                    <span class="checkmark">TEST</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="col-md-3"></div>
+                <div class="form-group col-md-9">
+                  <div class="col-sm-3 col-form-label custom-label-left">
+                    <input
+                      formControlName="baM"
+                      type="radio" id="BA Manager"
+                      name="baM" value="BaM"
+                      [checked]="rBaM"
+                      (change)="onProfitSelectionChange('BA')">
+                    <label for="BA Manager">BA Manager</label><br>
+                  </div>
+                  <div class="col-sm-3 col-form-label custom-label-left">
+                    <input
+                      formControlName="baM"
+                      type="radio" id="PM/Team Lead"
+                      name="baM" value="pmT"
+                      (change)="onProfitSelectionChange('Lead')">
+                    <label for="PM/Team Lead">PM/Team Lead</label><br>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <span style="font-weight: bold" class="col-sm-3 col-form-label custom-label-right">Danh sách tệp đính kèm ký </span>
+
+                </div>
+              </div>
+            </div>
+            <!--<div class="row">
+              <div *ngIf="currentFile" class="progress">
+                <div
+                  class="progress-bar progress-bar-info progress-bar-striped"
+                  role="progressbar"
+                  attr.aria-valuenow="{{ progress }}"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  [ngStyle]="{ width: progress + '%' }"
+                >
+                  {{ progress }}%
+                </div>
+              </div>
+
+              <label class="btn btn-default">
+                <input type="file" (change)="selectFile($event)" formControlName="file"/>
+              </label>
+
+              <button class="btn btn-success" [disabled]="!selectedFiles" (click)="upload()">
+                Upload
+              </button>
+
+              <div class="alert alert-light" role="alert">{{ message }}</div>-->
+
+            <!-- <div class="card">
+              <div class="card-header">List of Files</div>
+              <ul
+                class="list-group list-group-flush"
+                *ngFor="let file of fileInfos | async"
+              >
+                <li class="list-group-item">
+                  <a href="{{ file.url }}">{{ file.name }}</a>
+                </li>
+              </ul>
+            </div> -->
+            <!-- </div>-->
+            <!-- <div class="row">
+               <table class="table table-bordered table-striped table-sm">
+                 <thead style="background-color: rgba(0, 143, 224, 1);">
+                 <th style="text-align: center;">STT</th>
+                 <th style="text-align: center;">Tên tệp đính kèm</th>
+                 <th style="text-align: center;">Ngày uploap</th>
+                 </thead>
+                 <tbody>
+                 <tr *ngFor="let item of attachDoc; let i = index">
+                   <td style="text-align: center;">{{i + 1}}</td>
+                   <td style="text-align: center;">{{item.name}}</td>
+                   <td style="text-align: center;">{{item.createDate}}</td>
+                 </tr>
+                 </tbody>
+               </table>
+             </div>-->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label style="font-weight: bold" class="col-sm-3 col-form-label custom-label-right ">Tải file đính kèm
+                  </label>
+                  <div class="col-sm-9">
+                    <jhi-upload-file *ngIf="type !== 'detail'" #fileImport [multiple]='true'
+                                     [accept]="'.doc, .pdf,.rar, .zip, .xlsx, .xsl, .png'"
+                                     [property]="formControl['listFileProject']"
+                                     [title]="'title'" [isFocus]="false"
+                                     (onFileChange)="onChangeFile($event)"
+                                     (onError)="onError($event)">
+                    </jhi-upload-file>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row " >
+              <div style="width: 12%;display: inline-block;padding-right: 15px;line-height: 46px;text-align:right;"></div>
+              <div style="width: 88%; "> <div *ngIf="formControl['listFileProject'].value && formControl['listFileProject'].value.length > 0">
+                <table class="table table-bordered table-striped table-sm "
+                       sortable="true" style="">
+                  <thead>
+                  <tr class="text-center" >
+                    <th scope="col" class="text-center small-width-table">STT</th>
+                    <th scope="col" class="text-center small-width-table" *ngIf="type !== 'detail'">Hành động</th>
+                    <th scope="col" class="text-center medium-width-table ">Tên file
+                    </th>
+                    <th scope="col" class="text-center medium-width-table ">Ngày upload
+                    </th>
+                  </tr>
+                  </thead>
+                  <tbody
+                    *ngFor="let item of formControl['listFileProject'].value |slice: (filePage-1) * filePerPage : (filePage-1) * filePerPage + filePerPage; index as i">
+                  <tr>
+                    <td class="text-center">{{filePerPage * (filePage - 1) + i + 1}}</td>
+                    <td class="text-center" *ngIf="type !== 'detail'">
+                      <div class="group-action">
+                        <button class="btn btn-light" placement="top"
+                                ngbTooltip="{{ 'common.tooltip.action.delete' | translate }}"
+                                (click)="onDeleteDocument(item)">
+                          <i class="fa fa-trash-o icon-delete"
+                             aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </td>
+                    <td class="text-left {{(item.id === undefined ? '' : 'text-primary')}}"
+                        (click)="downloadFile(item)">{{item.fieldName || item.name}}</td>
+                    <td class="text-center">{{dateUpload}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+                <div class="d-flex justify-content-end table-footer"
+                     [hidden]="formControl['listFileProject'].value.length === 0">
+                  <div class="row justify-content-center">
+                    <p
+                      class="item-count">{{'common.table.totalItems'| translate}} {{formControl['listFileProject'].value.length}}</p>
+                    <ngb-pagination *ngIf="formControl['listFileProject'].value.length"
+                                    [collectionSize]="formControl['listFileProject'].value.length"
+                                    [(page)]="filePage"
+                                    [pageSize]="filePerPage" [maxSize]="maxFilePage"
+                                    [rotate]="true"
+                                    [boundaryLinks]="true" (pageChange)="pageChange($event)">
+                    </ngb-pagination>
+                    <jhi-page-size (onChangePageSize)="changePageSize($event)"></jhi-page-size>
+                  </div>
+                </div>
+              </div></div>
+
+
+            </div>
+            <div class="row"  style="width: 101%;">
+              <div style="width: 12%;display: inline-block;padding-right: 15px;line-height: 46px;text-align:right;">
+                <label class="form-control-label">Ghi chú</label>
+              </div>
+              <div style="width: 88%;display: inline-block;display: inline-block;text-align: right;">
+                <textarea type="text" class="form-control" formControlName="description" maxlength="1000"></textarea>
+              </div>
+
+
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- Quản trị dự án end -->
+
+    <!-- --------------------------------------------- -->
+
+
+    <div class="d-flex justify-content-end table-footer">
+      <div style="margin: 0 auto 20px">
+        <button type="button" class="btn btn-danger btn-view-column">
+          <i class="fa fa-remove mr-2 center-icon" aria-hidden="true" (click)="cancel()"> Hủy bỏ</i>
+        </button>
+
+        <button type="button" class="btn btn-primary btn-view-column">
+          <i class="fa fa-plus mr-2 center-icon" aria-hidden="true" (click)="saveProject()"> Ghi lại</i>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+
+</perfect-scrollbar>
+
+

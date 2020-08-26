@@ -1,0 +1,196 @@
+<jhi-spinner></jhi-spinner>
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <button routerLink="" class="btn btn-link btn-custom-bg" ngbTooltip="{{'common.tooltip.home' | translate}}">
+      <i class="fa fa-home icon-breadcrumb" aria-hidden="true"></i>
+    </button>
+  </li>
+  <li class="breadcrumb-item"><a>Danh mục hệ thống</a></li>
+  <li class="breadcrumb-item active">Quản lý nhân sự</li>
+</ol>
+<perfect-scrollbar class="ps" [style.max-height.px]="height" (window:resize)="onResize()">
+  <div id="organizationCategories" class="page-content">
+    <div class="card mb-1">
+      <div class="card-header">
+        <a data-toggle="collapse" href="#search" aria-expanded="true"><span
+          jhiTranslate="common.card.title.search"></span></a>
+      </div>
+      <div id="search" class="collapse show">
+        <div class="card-body">
+          <form [formGroup]="form" novalidate autocomplete="off">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right">Nhân sự</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" formControlName="code"
+                           jhiAutoFocusField placeholder="Nhập vào Username, Tên nhân sự hoặc email"
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6" >
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right " id = "solution">Trung tâm </label>
+                  <div class="col-sm-9">
+                      <ng-select class="cursor-text scroll-ng-select"
+                                 bindLabel="name" formControlName="centerId" bindValue="id"
+                                 notFoundText="{{ 'common.select.notFoundText' | translate }}"
+                                 clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                                 placeholder="--Tất cả--"
+                                 [items]="centerList"
+                                 [multiple]="false">
+                      </ng-select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right">Trạng thái</label>
+                  <div class="col-sm-9">
+<!--                    <ng-select [items]="cities"-->
+<!--                               bindLabel="name"-->
+<!--                               placeholder="Hoạt Động"-->
+<!--                               (change)="onChangePosition1($event)">-->
+<!--                    </ng-select>-->
+                    <ng-select class="cursor-text scroll-ng-select"
+                               bindLabel="name" formControlName="active" bindValue="id"
+                               notFoundText="{{ 'common.select.notFoundText' | translate }}"
+                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                               placeholder="--Tất cả--"
+                               [items]="cities"
+                               [multiple]="false">
+                    </ng-select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label custom-label-right">Phòng ban/Bộ phận</label>
+                  <div class="col-sm-9">
+                    <ng-select class="cursor-text scroll-ng-select"
+                               bindLabel="code" formControlName="departmentId"
+                               notFoundText="{{ 'common.select.notFoundText' | translate }}"
+                               placeholder="--Tất cả--"
+                               clearAllText="{{ 'common.tooltip.action.clearNgSelect' | translate }}"
+                               [items]="positionList"
+                               [multiple]="false"
+                               [searchFn]="customSearchFn"
+                               (change)="onChangePosition($event)"
+                               (clear)="onClearPosition()" autofocus>
+                    </ng-select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-center">
+
+              <button type="button" class="btn btn-primary" (click)="onSearchData()">
+                <i class="fa fa-search mr-2" aria-hidden="true"></i><span
+                jhiTranslate="common.button.search">Tìm kiếm</span>
+              </button>
+              <button *jhiHasPermission="['resource.qlns_dbns']" type="button" class="btn btn-primary"
+                      style="background-color: #0dad9e; border-color:#0dad9e ;margin-left: 2%"
+                      (click)="insertUDB()">
+                <i class="fa fa-refresh mr-2" aria-hidden="true"></i><span>Đồng bộ</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <a data-toggle="collapse" href="#dataTable" aria-expanded="true"><span
+          jhiTranslate="userGroup.titleTable"></span></a>
+      </div>
+      <div id="dataTable" class="collapse show">
+        <div class="card-body pt-2 pb-0 px-2">
+
+          <div class="row d-flex justify-content-end pr-1">
+            <button *jhiHasPermission="['resource.qlns_tmns']" type="button" class="btn btn-primary"
+                    (click)="openModalAddUser('add', null)">
+              <i class="fa fa-plus mr-2" aria-hidden="true"></i><span jhiTranslate="common.button.add">Thêmm mới</span>
+            </button>
+          </div>
+          <div class="row">
+            <table class="table table-bordered table-hover table-striped" id="tableCustoms">
+              <thead>
+              <tr class="text-center" jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
+                <th scope="col" class="small-width-table" jhiTranslate="userGroup.orderNumber">STT</th>
+                <th scope="col" class="medium-width-table action-width-four-icon custom-width"
+                >Hành động
+                </th>
+                <th scope="col" style="width: 15% "><span>UserName</span>
+                </th>
+                <th scope="col"><span>Tên nhân sự</span>
+                </th>
+                <th scope="col"><span>Email</span>
+                </th>
+                <th scope="col" style="width: 10% "><span>Số điện thọai</span>
+                </th>
+                <th scope="col" style="width: 8% "><span>Phòng ban/bộ phận</span>
+                </th>
+              </tr>
+              </thead>
+              <tbody *ngFor="let item of userList; index as i">
+              <tr>
+                <td class="text-center">{{itemsPerPage * (page - 1) + i + 1}}</td>
+                <td class="text-center four-icon medium-width-table">
+                  <div class="group-action">
+                    <button *jhiHasPermission="['resource.qlns_xttns']" class="btn btn-light" placement="top"
+                            ngbTooltip="Xem thông tin nhân sự"
+                            (click)="openModalAddUser('detail',item)">
+                      <i class="fa fa fa-info icon-color-blue" aria-hidden="true" ></i>
+                    </button>
+                    <button *jhiHasPermission="['resource.qlns_cnns']"
+                            class="btn btn-light" placement="top"
+                            ngbTooltip="{{'common.tooltip.action.update' | translate}}"
+                            (click)="openModalAddUser('update',item)">
+                      <i class="fa fa-pencil-square-o icon-update" aria-hidden="true"></i></button>
+                    <button *jhiHasPermission="['resource.qlns_xns']" class="btn btn-light" placement="top"
+
+                            (click)="onDelete(item)"
+                            onclick="this.blur();" >
+                      <i  *ngIf="item.active == 1" class="fa fa fa-unlock icon-color-blue " aria-hidden="true"  ngbTooltip="khóa"> </i>
+                      <i  *ngIf="item.active == 3" class="fa fa icon-color-blue fa-lock" style="color:#0273d4 !important;" aria-hidden="true"  ngbTooltip="mở khóa"></i>
+                    </button>
+                    <button *jhiHasPermission="['resource.qlns_dlmk']" class="btn btn-light" placement="top"
+                            (click)="onResetPassword(item)"
+                            ngbTooltip="Đặt lại mật khẩu">
+                      <i class="fa fa-refresh icon-color-blue" aria-hidden="true"></i>
+                    </button>
+
+                  </div>
+                </td>
+                <td>{{item.code}}</td>
+                <td>{{item.name}}</td>
+                <td>{{item.email}}</td>
+                <td>{{item.phone}}</td>
+                <td>{{item.parcode}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="row justify-content-start py-2 pl-1  table-footer no-data"
+               *ngIf="!totalItems || totalItems === 0">
+            <p class="item-count" jhiTranslate="common.table.noData"></p>
+          </div>
+          <div class="d-flex justify-content-end table-footer" [hidden]="totalItems === 0">
+            <div class="row justify-content-center">
+              <p class="item-count">{{'common.table.totalItems'| translate}} {{totalItems}}</p>
+              <ngb-pagination *ngIf="totalItems" [collectionSize]="totalItems" [(page)]="page"
+                              [pageSize]="itemsPerPage"
+                              [maxSize]="maxSizePage" [rotate]="true" [boundaryLinks]="true"
+                              (pageChange)="loadPage(page)">
+              </ngb-pagination>
+              <jhi-page-size (onChangePageSize)="changePageSize($event)"></jhi-page-size>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</perfect-scrollbar>
